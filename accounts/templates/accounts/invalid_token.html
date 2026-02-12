@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Invalid Link{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <h2>Link Expired or Invalid</h2>
+        <p>
+            This password reset link is either expired or already used.
+        </p>
+
+        <a class="login-btn" href="/forgot-password/">
+            Request New Reset
+        </a>
+    </div>
+</div>
+{% endblock %}

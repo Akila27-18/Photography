@@ -1,0 +1,114 @@
+.page-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: system-ui, sans-serif;
+}
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.tab {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  cursor: pointer;
+  font-weight: 500;
+}
+.tab.active {
+  background-color: #dc2626;
+  color: #fff;
+}
+
+.project-details .detail-row {
+  margin: 0.5rem 0;
+}
+.detail-row input {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.team-members {
+  margin-top: 2rem;
+}
+.team-group {
+  margin-bottom: 1.5rem;
+}
+.avatars {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 5px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #000;
+  border: 2px solid #d1d5db;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.avatar.active {
+  background-color: #000;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+.tasks {
+  margin-top: 2rem;
+}
+.tasks ul {
+  list-style: none;
+  padding: 0;
+}
+.tasks li {
+  margin: 0.5rem 0;
+}
+.tasks input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.actions {
+  margin-top: 2rem;
+}
+.actions label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.actions input[type="date"] {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+.actions .btn {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.actions .btn-primary {
+  background-color: #000;
+  color: #fff;
+}
+.actions .btn-danger {
+  background-color: #EF4444;
+  color: #fff;
+}
+.actions .btn-danger:hover {
+  background-color: #dc2626;
+}

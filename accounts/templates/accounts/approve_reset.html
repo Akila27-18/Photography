@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Approve Password Reset{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <h2>Approve Password Reset</h2>
+        <p>Approve or decline this password reset request.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <button type="submit" name="action" value="approve" class="login-btn">Approve</button>
+                <button type="submit" name="action" value="decline" class="login-btn" style="background:#555;">Decline</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ project.client_name }} - Photo Selection</title>
+    <link rel="stylesheet" href="{% static 'css/selection.css' %}">
+</head>
+<body>
+
+<div class="selection-header">
+    <h2>{{ project.client_name }} - Select Your Photos</h2>
+    <div class="selection-counter">
+        Selected: <span id="selected-count">0</span>
+    </div>
+    <button id="save-selection" class="save-btn">Save Selection</button>
+</div>
+
+<div class="gallery-container">
+    {% for photo in photos %}
+    <div class="photo-card {% if photo.is_selected %}selected{% endif %}" 
+         data-photo-id="{{ photo.id }}">
+        <img src="{{ photo.image.url }}" alt="Photo">
+        <div class="overlay">✓ Selected</div>
+    </div>
+    {% empty %}
+    <p>No photos available for selection.</p>
+    {% endfor %}
+</div>
+
+<script>
+// ----------------- CSRF Helper -----------------
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        document.cookie.split(";").forEach(c => {
+            c = c.trim();
+            if (c.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(c.substring(name.length + 1));
+            }
+        });
+    }
+    return cookieValue;
+}
+
+// ----------------- Toggle Selection -----------------
+document.querySelectorAll(".photo-card").forEach(card => {
+    card.addEventListener("click", function() {
+        this.classList.toggle("selected");
+        updateCounter();
+    });
+});
+
+function updateCounter() {
+    const count = document.querySelectorAll(".photo-card.selected").length;
+    document.getElementById("selected-count").innerText = count;
+}
+
+// Initialize counter on load
+updateCounter();
+
+// ----------------- AJAX Save -----------------
+document.getElementById("save-selection").addEventListener("click", function() {
+    const selectedIds = Array.from(document.querySelectorAll(".photo-card.selected"))
+                            .map(el => el.dataset.photoId);
+
+    fetch("{% url 'projects:save_client_selection' token=project.selection.token %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ selected_ids: selectedIds })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("Your selection has been saved!");
+        } else {
+            alert("Error saving selection: " + (data.error || "Unknown error"));
+        }
+    })
+    .catch(err => alert("Network error: " + err));
+});
+</script>
+
+</body>
+</html>

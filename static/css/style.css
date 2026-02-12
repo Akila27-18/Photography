@@ -1,0 +1,101 @@
+/* GLOBAL */
+body {
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  background: #fff;
+}
+
+/* PAGE LAYOUT */
+.login-page {
+  display: flex;
+  height: 100vh;
+}
+
+/* LEFT PANEL */
+.login-left {
+  width: 50%;
+  background: #FDEEEE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-left img {
+  max-width: 80%;
+}
+
+/* RIGHT PANEL */
+.login-right {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* LOGO */
+.login-logo {
+  height: 60px;
+  margin-bottom: 20px;
+}
+
+/* TEXT */
+.welcome-text {
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+/* FORM */
+.login-form {
+  width: 320px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* PASSWORD EYE */
+.password-group {
+  position: relative;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  cursor: pointer;
+}
+
+/* REMEMBER */
+.remember-row {
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+/* BUTTON */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #A32E37;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* FORGOT */
+.forgot-link {
+  margin-top: 15px;
+  font-size: 13px;
+  text-decoration: none;
+  color: #A32E37;
+}

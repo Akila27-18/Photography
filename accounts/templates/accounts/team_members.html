@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-container" style="max-width:900px; margin:40px auto; padding:20px; background-color:#FFFFFF; border-radius:10px; color:#000000; font-family:'Outfit', sans-serif; box-shadow:0 0 15px rgba(0,0,0,0.2);">
+
+  <h2 style="color:#A32E37; text-align:center; margin-bottom:20px;">Team Members</h2>
+
+  <a href="{% url 'accounts:add_team_member' %}" 
+     style="display:inline-block; margin-bottom:15px; background-color:#A32E37; color:#FFFFFF; padding:10px 16px; border-radius:6px; text-decoration:none; font-weight:600; transition:all 0.2s ease-in-out;">
+    Add New Member
+  </a>
+
+  <table style="width:100%; border-collapse:collapse; margin-top:10px; background-color:#FFFFFF; color:#000000;">
+    <thead>
+      <tr style="background-color:#131313; color:#FFFFFF;">
+        <th style="padding:10px; border:1px solid #A32E37;">ID</th>
+        <th style="padding:10px; border:1px solid #A32E37;">Username</th>
+        <th style="padding:10px; border:1px solid #A32E37;">Email</th>
+        <th style="padding:10px; border:1px solid #A32E37;">Role</th>
+        <th style="padding:10px; border:1px solid #A32E37;">Photography Role</th>
+        <th style="padding:10px; border:1px solid #A32E37;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in members %}
+      <tr style="background-color:#FFFFFF; color:#000000;">
+        <td style="padding:8px; border:1px solid #A32E37;">{{ member.id }}</td>
+        <td style="padding:8px; border:1px solid #A32E37;">{{ member.username }}</td>
+        <td style="padding:8px; border:1px solid #A32E37;">{{ member.email }}</td>
+        <td style="padding:8px; border:1px solid #A32E37;">{{ member.role }}</td>
+        <td style="padding:8px; border:1px solid #A32E37;">{{ member.photography_role|default:"-" }}</td>
+        <td style="padding:8px; border:1px solid #A32E37;">
+          <a href="{% url 'accounts:edit_team_member' member.id %}" 
+             style="padding:5px 10px; background-color:#A32E37; color:#FFFFFF; text-decoration:none; border-radius:4px; font-weight:600; margin-right:5px;">
+            Edit
+          </a>
+          <a href="{% url 'accounts:delete_team_member' member.id %}" 
+             onclick="return confirm('Are you sure?');"
+             style="padding:5px 10px; background-color:#F00A0A; color:#FFFFFF; text-decoration:none; border-radius:4px; font-weight:600; margin-right:5px;">
+            Delete
+          </a>
+          <a href="{% url 'accounts:admin_reset_team_password' member.id %}" 
+             style="padding:5px 10px; background-color:#03981E; color:#FFFFFF; text-decoration:none; border-radius:4px; font-weight:600;">
+            Reset Password
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr style="background-color:#FFFFFF; color:#000000;">
+        <td colspan="6" style="padding:10px; border:1px solid #A32E37; text-align:center;">No team members found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

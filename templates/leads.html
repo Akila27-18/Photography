@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/leads.css' %}">
+{% endblock %}
+
+{% block title %}Leads{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <!-- OVERVIEW -->
+  <section class="overview">
+    <h1 class="page-title">Leads Overview</h1>
+
+    <div class="stats-row">
+      <div class="stat"><span>Total Leads</span><strong id="totalLeads">{{ total_leads }}</strong></div>
+      <div class="stat"><span>Total Amount</span><strong id="totalAmount">₹ {{ total_amount|intcomma }}</strong></div>
+      <div class="stat"><span>Accepted</span><strong id="acceptedAmount">₹ {{ accepted_amount|intcomma }}</strong></div>
+      <div class="stat"><span>Lost</span><strong id="lostAmount">₹ {{ lost_amount|intcomma }}</strong></div>
+
+      <div class="actions">
+        <button id="newLeadBtn" class="btn-primary">+ NEW LEADS</button>
+        
+        <div class="search-box">
+            <input
+              type="text"
+              id="globalSearch"
+              placeholder="Search...."
+              class="search-input"
+            />
+
+          </div>
+
+        <button id="filterBtn" class="btn-filter">
+          <img src="{% static 'images/bx_filter.png' %}" alt="Filter"> Filters
+        </button>
+
+        <div id="filterDropdown" class="filter-dropdown">
+          <label><input type="checkbox" value="NEW" checked> New</label>
+          <label><input type="checkbox" value="FOLLOW" checked> Follow Up</label>
+          <label><input type="checkbox" value="ACCEPTED" checked> Accepted</label>
+          <label><input type="checkbox" value="LOST" checked> Lost</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOARD -->
+  <section class="leads-board-wrapper">
+    <div class="board">
+      {% for status, label in status_choices %}
+
+      <div class="column {{ status|lower }}" data-status="{{ status }}">
+        <div class="column-header {{ status|lower }}">
+          <span class="header-pill"><span class="dot"></span>{{ status }}</span>
+          <span class="count" id="count-{{ status|lower }}">0</span>
+        </div>
+        <div class="cards" id="cards-{{ status }}"></div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<!-- ADD MODAL -->
+<div id="addModal" class="modal">
+  <div class="modal-content modal-wide">
+  <div class="modal-header">
+    <h3>Add Lead</h3>
+    <button type="button" class="modal-close">&times;</button>
+    </div>
+
+    <form id="addForm" class="split-form">{% csrf_token %}
+      <div class="form-col">
+        <label>Name</label><input name="name" required placeholder="Lead name">
+        <label for="event_type">Event Type</label>
+<select name="event_type" id="event_type">
+    <option value="">Select photography event</option>
+    <option value="wedding">Wedding Photography</option>
+    <option value="pre_wedding">Pre-Wedding Shoot</option>
+    <option value="engagement">Engagement</option>
+    <option value="birthday">Birthday Party</option>
+    <option value="corporate">Corporate Event</option>
+    <option value="conference">Conference</option>
+    <option value="concert">Concert / Live Show</option>
+    <option value="fashion">Fashion Show</option>
+    <option value="product">Product Photography</option>
+    <option value="food">Food Photography</option>
+    <option value="real_estate">Real Estate / Architecture</option>
+    <option value="portrait">Portrait / Headshot</option>
+    <option value="family">Family Shoot</option>
+    <option value="maternity">Maternity</option>
+    <option value="newborn">Newborn</option>
+    <option value="travel">Travel / Destination</option>
+    <option value="sports">Sports Event</option>
+    <option value="other">Other</option>
+</select>
+
+        <label>Amount</label><input type="number" name="amount" required min="0" placeholder="Total amount">
+        <label>Event Start Date</label><input type="date" name="event_start_date" required>
+        <label>Start Session</label>
+        <select name="event_start_session">
+          <option value="MOR">Mor</option>
+          <option value="EVE">Eve</option>
+        </select>
+        <label>Event End Date</label><input type="date" name="event_end_date">
+        <label>End Session</label>
+        <select name="event_end_session">
+          <option value="MOR">Mor</option>
+          <option value="EVE">Eve</option>
+        </select>
+      </div>
+
+      <div class="form-col">
+        <label>Phone</label><input name="phone" placeholder="Phone">
+        <label>Email</label><input name="email" placeholder="Email">
+        <label>Event Place</label><input name="event_place" placeholder="Event place">
+        <label>Follow-up Date</label><input type="date" name="followup_date">
+        <label>Advance Amount</label><input type="number" name="advance_amount" min="0" placeholder="Advance">
+        <div class="conflict-warning"></div>
+        <button type="button" id="addAcceptBtn" class="btn-success">Accept Lead</button>
+
+        
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+ 
+<div id="editModal" class="modal">
+  <div class="modal-content modal-wide">
+  <div class="modal-header">
+    <h3>Edit Lead</h3>
+    <button type="button" class="modal-close">&times;</button>
+    </div>
+
+    <form id="editForm" class="split-form">{% csrf_token %}
+      <input type="hidden" name="id">
+      <div class="form-col">
+        <label>Name</label><input name="name">
+        <label>Event Type</label><input name="event_type">
+        <label>Amount</label><input type="number" name="amount" min="0">
+        <label>Event Start Date</label><input type="date" name="event_start_date">
+        <label>Start Session</label>
+        <select name="event_start_session"><option value="MOR">Mor</option><option value="EVE">Eve</option></select>
+        <label>Event End Date</label><input type="date" name="event_end_date">
+        <label>End Session</label>
+        <select name="event_end_session"><option value="MOR">Mor</option><option value="EVE">Eve</option></select>
+      </div>
+      <div class="form-col">
+        <label>Phone</label><input name="phone">
+        <label>Email</label><input name="email">
+        <label>Event Place</label><input name="event_place">
+        <label>Follow-up Date</label><input type="date" name="followup_date">
+        <label>Advance Amount</label><input type="number" name="advance_amount" min="0">
+        <div class="conflict-warning"></div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Save</button>
+          <button type="button" id="editAcceptBtn" class="btn-success">Accept Lead</button>
+          <button type="button" id="deleteBtn" class="btn-danger">Delete</button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="{% static 'js/leads.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <!-- HEADER -->
+  <section class="overview">
+    <h1 class="page-title">Projects</h1>
+    <div class="views">
+      <div class="active">
+        <img src="{% static 'images/solid board view.svg' %}" class="icon"> Board View
+      </div>
+      <div>
+        <img src="{% static 'images/solid list view.svg' %}" class="icon"> List View
+      </div>
+      <div>
+        <img src="{% static 'images/solid project overview.svg' %}" class="icon"> Projects Overview
+      </div>
+      <div>
+        <img src="{% static 'images/filter.svg' %}" class="icon"> Filters
+      </div>
+    </div>
+  </section>
+
+  <!-- BOARD -->
+  <section class="projects-board-wrapper">
+    <div class="board">
+
+      {% for column, projects in board.items %}
+      {% with slug=column|lower|slugify %}
+      <div class="column {{ slug }}">
+
+        <!-- COLUMN HEADER -->
+        <div class="column-header">
+          <span class="header-pill">{{ column }}</span>
+          <span class="count">{{ projects|length }}</span>
+        </div>
+
+        <!-- CARDS -->
+        <div class="cards" id="{{ slug }}-cards">
+
+          {% for project in projects %}
+    <div class="project-card {{ slug }}"
+     data-project-id="{{ project.id }}"
+     {% if project.selection %}
+        data-token="{{ project.selection.token }}"
+    {% endif %}
+
+    {% if slug == "pre-production" or slug == "post-production" %}
+        data-session-url="{% url 'projects:project_sessions' project.id %}"
+    {% endif %}
+
+     style="cursor:pointer;">
+
+
+
+
+    <!-- CODE -->
+    <small class="project-code">{{ project.code }}</small>
+
+    <!-- NAME -->
+    <div class="project-header-row">
+      <div class="project-name">{{ project.client_name }}</div>
+      {% if slug == "pre-production" %}
+      <span class="badge badge-progress">In-Progress</span>
+      {% endif %}
+    </div>
+
+    <hr class="card-divider">
+
+    <!-- EVENT -->
+    <div class="row">
+      <img src="{% static 'images/icon1.svg' %}" class="icon">
+      <span>{{ project.event_type }}</span>
+    </div>
+
+    <!-- DATE -->
+    <div class="row">
+      <img src="{% static 'images/icon2.svg' %}" class="icon">
+      <span>{{ project.start_date }} – {{ project.end_date }}</span>
+    </div>
+    <!-- To be assigned -->
+     <!-- TO BE ASSIGNED -->
+{% if slug == "to-be-assigned" %}
+<div class="task-boxes">
+    <span class="task-box">New</span>
+    <span class="task-box">50/50 Tasks</span>
+</div>
+{% endif %}
+
+<!-- PRE PRODUCTION TASKS -->
+{% if slug == "pre-production" %}
+<div class="task-boxes">
+    {% for name, progress in project.pre_tasks %}
+        <span class="task-box">{{ name }}</span>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- SELECTION TASKS -->
+{% if slug == "selection" %}
+<div class="task-boxes">
+    <span class="task-box">Photo updation</span>
+    <span class="task-box">Photo Selection</span>
+</div>
+{% endif %}
+
+<!-- POST PRODUCTION TASKS -->
+{% if slug == "post-production" %}
+<div class="task-boxes">
+    <span class="task-box">Album</span>
+    <span class="task-box">Photo copy</span>
+    <span class="task-box">Video</span>
+    <span class="task-box">Prints</span>
+</div>
+{% endif %}
+
+<!-- COMPLETED PROJECT TASKS -->
+{% if slug == "completed" %}
+<div class="task-boxes">
+    <span class="task-box">Album received</span>
+    <span class="task-box">Payment received</span>
+</div>
+{% endif %}
+
+    <hr class="card-divider">
+
+    <!-- AVATARS -->
+    <div class="avatars">
+      {% for member in project.team.all|slice:":5" %}
+      <div class="avatar" title="{{ member.username }}">{{ member.username|slice:":2"|upper }}</div>
+      {% empty %}
+      {% for i in "12345" %}
+      <div class="avatar empty"></div>
+      {% endfor %}
+      {% endfor %}
+    </div>
+
+</div>
+{% endfor %}
+
+
+        </div>
+      </div>
+      {% endwith %}
+      {% endfor %}
+
+    </div>
+  </section>
+<div id="selectionModal" class="modal-overlay" >
+  <div class="modal-box">
+    <button id="selectionCloseBtn" class="modal-close">×</button>
+    <h2>Enter Password</h2>
+    <input type="password" id="selectionPassword" placeholder="Password">
+    <button id="selectionSubmitBtn">Access Gallery</button>
+    <div id="selectionError" style="color:red;"></div>
+  </div>
+</div>
+
+
+<!-- ================= MODAL ================= -->
+<div id="assignModal" class="modal-overlay">
+  <div class="modal-box">
+    <button id="assignCloseBtn" class="modal-close">×</button>
+    <img src="{% static 'images/reminder image.svg' %}" class="modal-icon">
+    <h2>You Have {{to_assign_count}} Projects<br>To Assign Team</h2>
+    <button id="assignNowBtn" class="assign-btn">Assign Now</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const UPDATE_STATUS_URL = "{% url 'projects:update_project_status' %}";
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="{% static 'js/projects.js' %}"></script>
+{% endblock %}

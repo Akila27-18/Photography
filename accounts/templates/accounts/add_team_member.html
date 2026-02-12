@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-container" style="max-width:600px; margin:50px auto; padding:30px; background-color:#FFFFFF; border-radius:10px; font-family:'Outfit', sans-serif; color:#000000; box-shadow:0 0 15px rgba(0,0,0,0.2);">
+
+  <h2 style="text-align:center; color:#A32E37; margin-bottom:25px;">Add Team Member</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- Username -->
+    <div class="field" style="margin-bottom:15px;">
+      <label style="display:block; font-weight:600; margin-bottom:5px; color:#A32E37;">Username</label>
+      <input type="text" name="username" required style="width:100%; padding:10px; border:1px solid #131313; border-radius:5px;">
+    </div>
+
+    <!-- Email -->
+    <div class="field" style="margin-bottom:15px;">
+      <label style="display:block; font-weight:600; margin-bottom:5px; color:#A32E37;">Email</label>
+      <input type="email" name="email" required style="width:100%; padding:10px; border:1px solid #131313; border-radius:5px;">
+    </div>
+
+    <!-- Password -->
+    <div class="field" style="margin-bottom:15px;">
+      <label style="display:block; font-weight:600; margin-bottom:5px; color:#A32E37;">Password</label>
+      <input type="password" name="password" required style="width:100%; padding:10px; border:1px solid #131313; border-radius:5px;">
+    </div>
+
+    <!-- Role -->
+    <div class="field" style="margin-bottom:15px;">
+      <label style="display:block; font-weight:600; margin-bottom:5px; color:#A32E37;">Role</label>
+      <select name="role" required style="width:100%; padding:10px; border:1px solid #131313; border-radius:5px;">
+        <option value="team">Team Member</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <!-- Photography Role -->
+    <div class="field" style="margin-bottom:25px;">
+      <label style="display:block; font-weight:600; margin-bottom:5px; color:#A32E37;">Photography Role</label>
+      <select name="photography_role" style="width:100%; padding:10px; border:1px solid #131313; border-radius:5px;">
+        <option value="">-- Select Role --</option>
+        <option value="photographer">Photographer</option>
+        <option value="videographer">Videographer</option>
+        <option value="editor">Editor</option>
+        <option value="album_designer">Album Designer</option>
+      </select>
+    </div>
+
+    <button type="submit" style="width:100%; padding:12px; background-color:#A32E37; color:#FFFFFF; font-weight:600; border:none; border-radius:6px; cursor:pointer; transition:all 0.2s ease-in-out;">
+      Add Member
+    </button>
+  </form>
+
+  <a href="{% url 'accounts:team_members' %}" 
+     style="display:block; text-align:center; margin-top:20px; color:#A32E37; text-decoration:none; font-weight:600;">
+    Back to Team Members
+  </a>
+</div>
+{% endblock %}
