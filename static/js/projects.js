@@ -152,3 +152,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // your existing code ...
+
+    // ASSIGN MODAL
+    const assignModal = document.getElementById("assignModal");
+    const assignCloseBtn = document.getElementById("assignCloseBtn");
+    const assignNowBtn = document.getElementById("assignNowBtn");
+
+    if (typeof TO_ASSIGN_COUNT !== "undefined" && TO_ASSIGN_COUNT > 0) {
+        assignModal?.classList.add("active");
+    }
+
+    assignCloseBtn?.addEventListener("click", function () {
+        assignModal.classList.remove("active");
+    });
+
+});
+

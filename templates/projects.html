@@ -181,8 +181,10 @@
 {% block extra_js %}
 <script>
 const UPDATE_STATUS_URL = "{% url 'projects:update_project_status' %}";
+const TO_ASSIGN_COUNT = {{ to_assign_count|default:0 }};
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script src="{% static 'js/projects.js' %}"></script>
 {% endblock %}
+

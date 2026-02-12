@@ -271,3 +271,10 @@
   cursor: pointer !important;
 }
 
+.modal-overlay {
+    display: none;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
