@@ -1,0 +1,273 @@
+/* Board Layout */
+.board {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.views {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 1rem;
+}
+/* Columns */
+.column {
+  flex: 1;
+  background-color: #eef2f3;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+/* Column Header */
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  color: #fff;
+}
+
+.column.to-be-assigned .column-header { color: #C084FC; background-color: #e8daf6; }
+.column.pre-production .column-header { color: #6366F1; background-color: #e0e7ff; }
+.column.selection .column-header { color: #FACC15; background-color: #fff9c4; }
+.column.post-production .column-header { color: #EF4444; background-color: #f7cccc; }
+.column.completed .column-header { color: #22C55E; background-color: #dbefe1; }
+.count::before {
+    content: '0';
+}
+/* Cards */
+.project-card {
+  background-color: #fff;
+  width: auto;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.project-code {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Header Row inside Card */
+.project-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #717376;
+}
+
+.badge-new { background-color: #E9D5FF; color: #6b21a8; }
+.badge-progress { background-color: #f2f7b2; color: #caa40b; border:1px solid #caa40b; }
+.badge-tasks { background-color: #f3f4f6; color: #374151; }
+
+/* Rows inside Card */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  margin: 0.25rem 0;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Task Boxes (Pre Production subtasks) */
+.task-boxes {
+  display: grid;
+  text-align: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns */
+  gap: 0.5rem; /* space between items */
+  margin-top: 0.5rem;
+}
+
+.task-box {
+  text-align: center;
+  background-color: #f3f4f6;
+  border: 1px solid #6b7280;
+  border-radius: 5px;
+  padding: 1px;
+  font-size: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+
+
+/* Avatars */
+.avatars {
+  display: flex;
+  /* gap: -0.25rem; */
+  margin-top: 0.5rem;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.avatar img.icon {
+  width: 14px;
+  height: 14px;
+}
+
+.avatar.empty {
+  background-color: #f3f4f6;
+}
+
+/* Avatars container */
+.avatars {
+  display: flex;
+  /* gap: 0.25rem; */
+  margin-top: 0.5rem;
+}
+
+/* Avatar base style */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e5e7eb; /* light gray default */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  border: 2px solid #d1d5db; /* subtle border for round look */
+}
+
+/* Empty avatar (placeholder) */
+.avatar.empty {
+  background-color: #b3b7ba; /* lighter gray for empty */
+  color: transparent;        /* hide text */
+}
+
+/* Avatar icon inside */
+.avatar img.icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6; /* subtle icon for empty slots */
+}
+
+/* Filled avatar (with initials) */
+.avatar:not(.empty) {
+  background-color: #000; /* indigo for active members */
+  color: #fff;
+}
+
+.project-card {
+  cursor: grab;
+}
+.project-card:active {
+  cursor: grabbing;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  display: none;               /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+
+  /* Smooth fade-in */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* When modal is active */
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+/* Modal Box */
+.modal-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 25px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+/* Animate modal box when overlay becomes active */
+.modal-overlay.active .modal-box {
+  transform: scale(1);
+}
+
+/* Close Button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Optional: modal icon */
+.modal-icon {
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+/* Assign Button */
+.assign-btn {
+  background: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.assign-btn:hover {
+  background: #0056b3;
+}
+
+.project-card.selection {
+  cursor: pointer !important;
+}
+

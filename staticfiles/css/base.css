@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+:root {
+  --red: #A32E37;
+  --black: #131313;
+  --border: #EDEDED;
+  --bg: #F9F9F9;
+  --white: #FFFFFF;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--black);
+}
+
+/* ================= PAGE WRAPPER ================= */
+/* THIS IS THE FIX FOR “STUCK TO CORNER” */
+.page-container {
+  padding: 24px 32px 32px;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+  height: 72px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* LEFT */
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+/* CENTER */
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+  color: var(--black);
+}
+
+.nav-item span {
+  opacity: 0.6;
+}
+
+.nav-item img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0);
+}
+
+/* ACTIVE */
+.nav-item.active span {
+  color: var(--red);
+  opacity: 1;
+}
+
+.nav-item.active img {
+  filter: none;
+}
+
+.nav-item.active::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  width: 100%;
+  height: 2px;
+  background: var(--red);
+  border-radius: 2px;
+}
+
+/* RIGHT */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+.profile-circle {
+  width: 30px;
+  height: 30px;
+  background: var(--black);
+  border-radius: 8px;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ================= NAVBAR ITEMS ================= */
+
+.nav-item {
+  position: relative; /* Needed for underline */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--black);
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-item span {
+  opacity: 0.6;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.nav-item img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0); /* default dark icon */
+  transition: filter 0.3s ease, transform 0.2s ease;
+}
+
+/* ================= ACTIVE STATE ================= */
+.nav-item.active span {
+  color: var(--red);
+  opacity: 1;
+}
+
+.nav-item.active img {
+  filter: none; /* show original filled icon */
+}
+
+.nav-item.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px; /* slightly closer to text */
+  width: 100%;
+  height: 2px;
+  background: var(--red);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.nav-item.active svg path {
+
+  fill: #A32E37; /* change SVG path color */
+}
+
+/* ================= HOVER EFFECT ================= */
+.nav-item:hover span {
+  color: var(--red);
+  opacity: 1;
+}
+
+.nav-item:hover img {
+  filter: none; /* show filled version on hover */
+  transform: scale(1.1); /* slight zoom effect */
+}

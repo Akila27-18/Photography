@@ -1,0 +1,166 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", sans-serif;
+}
+
+/* FIGMA COLORS */
+:root {
+  --input-bg: #f4f4f4;
+  --input-border: #e3e3e3;
+  --text-main: #111111;
+  --text-muted: #8a8a8a;
+  --brand-red: #9f2c32;
+}
+
+body {
+    color: black;
+  background: #000;
+}
+
+/* MAIN LAYOUT */
+.login-page {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* LEFT IMAGE — FILL AREA */
+.login-left {
+  width: 50%;
+  height: 100vh;
+  background: url("../images/admin login image.png") center center / cover no-repeat;
+}
+
+/* RIGHT PANEL */
+.login-right {
+  width: 50%;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARD */
+.login-card {
+  width: 420px;
+  text-align: center;
+}
+
+/* LOGO */
+.login-logo {
+  width: 90px;
+  margin-bottom: 28px;
+}
+
+/* TITLE */
+.welcome-text {
+  font-size: 26px;
+  font-weight: 600;
+  color: black;
+  margin-bottom: 16px;
+}
+
+/* ROLE SWITCH */
+.role-switch {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  font-size: 14px;
+  color: black;
+  margin-bottom: 36px;
+}
+
+.role-switch input {
+  margin-right: 6px;
+  accent-color: var(--brand-red);
+}
+
+/* INPUT FIELD */
+.field {
+  position: relative;
+  border: 1px solid black;
+  border-radius: 6px;
+  margin-bottom: 18px;
+}
+
+.field input {
+  width: 100%;
+  height: 48px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  padding: 0 44px;
+  font-size: 14px;
+  color: var(--text-main);
+  outline: none;
+
+  /* FIGMA HIGHLIGHT */
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.field input::placeholder {
+  color: #9a9a9a;
+}
+
+/* FOCUS STATE */
+.field input:focus {
+  border-color: var(--brand-red);
+  background: #ffffff;
+}
+
+/* ICONS */
+.icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.icon img,
+.eye img {
+  width: 16px;
+  height: auto;
+  opacity: 0.6;
+}
+
+/* BUTTON */
+.login-btn {
+  width: 100%;
+  height: 48px;
+  background: var(--brand-red);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-btn:hover {
+  background: #8c242a;
+}
+
+/* FORGOT */
+.forgot-link {
+  display: block;
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
