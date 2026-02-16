@@ -1,0 +1,33 @@
+<form method="GET" class="filters-bar">
+
+  <input type="text" name="search"
+         placeholder="Search..."
+         value="{{ filters.search }}">
+
+  <select name="status">
+    <option value="">All Status</option>
+    <option value="to_assign" {% if filters.status == "to_assign" %}selected{% endif %}>To Be Assigned</option>
+    <option value="pre_production" {% if filters.status == "pre_production" %}selected{% endif %}>Pre Production</option>
+    <option value="selection" {% if filters.status == "selection" %}selected{% endif %}>Selection</option>
+    <option value="post_production" {% if filters.status == "post_production" %}selected{% endif %}>Post Production</option>
+    <option value="completed" {% if filters.status == "completed" %}selected{% endif %}>Completed</option>
+  </select>
+
+  <select name="member">
+    <option value="">All Members</option>
+    {% for m in team_members %}
+      <option value="{{ m.id }}"
+        {% if filters.member == m.id|stringformat:"s" %}selected{% endif %}>
+        {{ m.username }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <input type="date" name="start_date" value="{{ filters.start_date }}">
+  <input type="date" name="end_date" value="{{ filters.end_date }}">
+
+  <button type="submit" class="filter-btn">Apply</button>
+
+  <a href="{{ request.path }}" class="clear-btn">Clear</a>
+
+</form>

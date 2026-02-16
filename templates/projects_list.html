@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects_list.css' %}">
+{% endblock %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <!-- ================= HEADER ================= -->
+  <section class="overview">
+    <h1 class="page-title">Projects</h1>
+
+    <div class="views">
+
+      <!-- Board -->
+      <div class="view-item {% if 'board' in request.path %}active{% endif %}">
+        <a href="{% url 'projects:board' %}">
+          {% if 'board' in request.path %}
+            <img src="{% static 'images/filled board view.svg' %}" class="icon">
+          {% else %}
+            <img src="{% static 'images/solid board view.svg' %}" class="icon">
+          {% endif %}
+          Board View
+        </a>
+      </div>
+
+      <!-- LIST -->
+      <div class="view-item {% if 'list' in request.path %}active{% endif %}">
+        <a href="{% url 'projects:list' %}">
+          {% if 'list' in request.path %}
+            <img src="{% static 'images/filled list view.svg' %}" class="icon">
+          {% else %}
+            <img src="{% static 'images/solid list view.svg' %}" class="icon">
+          {% endif %}
+          List View
+        </a>
+      </div>
+
+      <!-- OVERVIEW -->
+      <div class="view-item {% if 'overview' in request.path %}active{% endif %}">
+        <a href="{% url 'projects:overview' %}">
+          {% if 'overview' in request.path %}
+            <img src="{% static 'images/filled project overview.svg' %}" class="icon">
+          {% else %}
+            <img src="{% static 'images/solid project overview.svg' %}" class="icon">
+          {% endif %}
+          Projects Overview
+        </a>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-wrapper">
+        <button id="filterToggle" class="filter-btn">
+          <img src="{% static 'images/filter.svg' %}" class="icon">
+          Filters
+        </button>
+
+        <div id="filtersPanel" class="filter-dropdown hidden">
+          {% include "partials/project_filters.html" %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================= LIST VIEW ================= -->
+  <section class="projects-list-wrapper">
+    <div class="list-table">
+
+      <div class="list-head">
+        <div>Project ID</div>
+        <div>Project Name</div>
+        <div>Event Date</div>
+        <div>Assigned To</div>
+        <div>Tasks</div>
+        <div>Status</div>
+      </div>
+      <hr>
+
+      {% for status, projects in grouped_projects.items %}
+        {% if projects %}
+
+        <div class="list-section"
+             style="background: {{ projects.0.status_color }}">
+          <span class="section-dot"
+                style="background: {{ projects.0.header_color }}"></span>
+          {{ projects.0.get_status_display|upper }}
+        </div>
+
+        {% for project in projects %}
+        <div class="list-row clickable-row"
+             data-session-url="{% url 'projects:project_sessions' project.id %}">
+
+          <div class="code">{{ project.code }}</div>
+
+          <div class="name">
+            {{ project.client_name }} {{ project.event_type }}
+          </div>
+
+          <div class="date">
+            {{ project.start_date }} – {{ project.end_date }}
+          </div>
+
+          <div class="avatars">
+            {% for member in project.team.all|slice:":5" %}
+              <div class="avatar">
+                {{ member.username|slice:":2"|upper }}
+              </div>
+            {% empty %}
+              {% for i in "12345" %}
+                <div class="avatar empty"></div>
+              {% endfor %}
+            {% endfor %}
+          </div>
+
+          <div class="task-pills">
+            {% for title, completed, total in project.stage_tasks %}
+              <span class="task-pill">
+                {{ completed }}/{{ total }} - {{ title }}
+              </span>
+            {% endfor %}
+          </div>
+
+          <div>
+            {% if project.status == "pre_production" or project.status == "selection" %}
+              <span class="status-pill yellow">In-Progress</span>
+            {% elif project.status == "post_production" %}
+              <span class="status-pill red">To Be Assigned</span>
+            {% elif project.status == "completed" %}
+              <span class="status-pill green">Completed</span>
+            {% endif %}
+          </div>
+
+        </div>
+        {% endfor %}
+        {% endif %}
+      {% endfor %}
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+  const toggle = document.getElementById("filterToggle");
+  const panel = document.getElementById("filtersPanel");
+
+  toggle.addEventListener("click", function (e) {
+    e.stopPropagation();
+    panel.classList.toggle("hidden");
+    toggle.classList.toggle("active");
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+      panel.classList.add("hidden");
+      toggle.classList.remove("active");
+    }
+  });
+
+  document.querySelectorAll(".clickable-row").forEach(row => {
+    row.addEventListener("click", function () {
+      window.location.href = this.dataset.sessionUrl;
+    });
+  });
+</script>
+{% endblock %}

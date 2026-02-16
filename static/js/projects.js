@@ -172,3 +172,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const toggleBtn = document.getElementById("filterToggle");
+  const panel = document.getElementById("filtersPanel");
+
+  if (!toggleBtn || !panel) return;
+
+  toggleBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    panel.classList.toggle("hidden");
+  });
+
+  // Close when clicking outside
+  document.addEventListener("click", function (e) {
+    if (!panel.contains(e.target) && !toggleBtn.contains(e.target)) {
+      panel.classList.add("hidden");
+    }
+  });
+
+});

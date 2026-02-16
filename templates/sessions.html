@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Sessions{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/sessions.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="sessions-container">
+
+    <h1 class="page-title">Sessions</h1>
+
+    <!-- TOP BAR -->
+    <div class="sessions-topbar">
+
+        <!-- FILTER TABS -->
+        <div class="session-tabs">
+
+            <button type="button"
+                    data-type="upcoming"
+                    class="tab {% if active_tab == 'upcoming' %}active{% endif %}">
+                Upcoming Event
+            </button>
+
+            <button type="button"
+                    data-type="past"
+                    class="tab {% if active_tab == 'past' %}active{% endif %}">
+                Past Event
+            </button>
+
+            <button type="button"
+                    data-type="decided"
+                    class="tab {% if active_tab == 'decided' %}active{% endif %}">
+                To Be Decided
+            </button>
+
+        </div>
+
+        <!-- SEARCH -->
+        <input type="text"
+               id="searchInput"
+               autocomplete="off"
+               placeholder="Search client..."
+               value="{{ request.GET.search|default:'' }}">
+
+    </div>
+
+    <!-- SESSION CONTENT -->
+    <div id="sessionsContent">
+        {% include "partials/sessions_list.html" %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/sessions.js' %}"></script>
+{% endblock %}

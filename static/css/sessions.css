@@ -1,0 +1,277 @@
+/* ================= PAGE CONTAINER ================= */
+
+.sessions-container {
+    width: 78%;
+    margin: 50px auto 100px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ================= PAGE TITLE ================= */
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 35px;
+    color: #000;
+}
+
+/* ================= TOP BAR ================= */
+
+.sessions-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 45px;
+}
+
+/* ================= FILTER TABS ================= */
+
+.session-tabs {
+    display: inline-flex;
+    gap: 8px;
+    background: #f2f2f2;
+    padding: 6px;
+    border-radius: 40px;
+}
+
+/* Remove default link styling */
+.session-tabs a {
+    text-decoration: none;
+    color: #444;
+}
+
+.tab {
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.tab:hover {
+    background: #e8e8e8;
+}
+
+.tab.active {
+    background: rgb(120, 22, 22);
+    color: #fff;
+}
+
+/* ================= SEARCH INPUT ================= */
+
+#searchInput {
+    padding: 10px 18px;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    width: 240px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+#searchInput:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+}
+
+/* ================= MONTH TITLE ================= */
+
+.month-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 45px 0 20px;
+    color: #000;
+}
+
+/* ================= FIX LINK UNDERLINE ISSUE ================= */
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ================= SESSION CARD ================= */
+
+.session-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin:70px;
+    padding: 22px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+
+.session-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+/* EXACT BACKGROUND COLORS */
+
+.session-card.in-progress {
+    background: rgb(245, 245, 164);   /* yellow */
+}
+
+.session-card.pending {
+    background: #f4dddd;   /* red */
+}
+
+/* ================= DATE ================= */
+
+.date-section {
+    width: 90px;
+    text-align: center;
+}
+
+.day {
+    font-size: 13px;
+    color: #444;
+    letter-spacing: 1px;
+}
+
+.date {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+}
+
+/* ================= DIVIDER ================= */
+
+.divider {
+    width: 5px;
+    height: 70px;
+    color: black;
+    background: rgba(12, 12, 12, 0.15);
+    margin: 0 30px;
+}
+
+/* ================= TIME BLOCK ================= */
+
+.time-block {
+    min-width: 200px;
+    font-size: 13px;
+    color: #000;
+    line-height: 1.6;
+}
+
+/* ================= TITLE ================= */
+
+.title-block {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 600;
+    padding-left: 20px;
+    color: #000;
+}
+
+/* ================= TEAM BLOCK ================= */
+
+.team-block {
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+}
+
+/* ================= AVATARS ================= */
+
+.avatars {
+    display: flex;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #1e1e1e;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: -10px;
+    border: 2px solid #fff;
+    transition: transform 0.2s ease;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+}
+
+/* ================= ASSIGN TEAM BUTTON ================= */
+
+.assign-team-btn {
+    font-size: 13px;
+    font-weight: 500;
+    color: #000;
+    text-decoration: none;
+    background: rgba(255,255,255,0.4);
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: 0.2s ease;
+}
+
+.assign-team-btn:hover {
+    background: rgba(255,255,255,0.6);
+}
+
+/* ================= STATUS BLOCK ================= */
+
+.status-block {
+    min-width: 140px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ================= STATUS BADGE ================= */
+
+.status-badge {
+    padding: 8px 22px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 120px;
+    text-align: center;
+}
+
+/* Badge colors */
+
+.progress {
+    background: #efe799;
+    color: #7b7113;
+}
+
+.pending-badge {
+    background: rgb(243, 172, 172);
+    color: #941818;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+    .sessions-container {
+        width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .session-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .divider {
+        display: none;
+    }
+
+    .status-block {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

@@ -12,6 +12,42 @@ from .models import Project, ProjectTask
 from accounts.models import User
 from .models import PhotoSelection, ProjectPhoto
 import uuid
+from django.db.models import Q
+from collections import defaultdict
+from django.shortcuts import render
+from django.utils.timezone import now
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from .models import Project
+
+
+def apply_project_filters(request, queryset):
+    search = request.GET.get("search")
+    status = request.GET.get("status")
+    member = request.GET.get("member")
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    if search:
+        queryset = queryset.filter(
+            Q(code__icontains=search) |
+            Q(client_name__icontains=search) |
+            Q(event_type__icontains=search)
+        )
+
+    if status:
+        queryset = queryset.filter(status=status)
+
+    if member:
+        queryset = queryset.filter(team__id=member)
+
+    if start_date:
+        queryset = queryset.filter(start_date__gte=start_date)
+
+    if end_date:
+        queryset = queryset.filter(end_date__lte=end_date)
+
+    return queryset.distinct()
 
 
 User = get_user_model()
@@ -56,7 +92,8 @@ from django.db.models import Prefetch
 from .models import PhotoSelection
 
 def projects_board(request):
-    projects = Project.objects.select_related("selection").prefetch_related("tasks").all()
+    projects = Project.objects.select_related("selection").prefetch_related("tasks", "team")
+    projects = apply_project_filters(request, projects)
     board = {
         "To Be Assigned": [],
         "Pre Production": [],
@@ -88,19 +125,14 @@ def projects_board(request):
         elif project.status == "completed":
             board["Completed"].append(project)
 
-    return render(request, "projects.html",
-        {
-            "board": board,
-            "to_assign_count": len(board["To Be Assigned"]),
-            "active_page": "projects",
-        })
+    return render(request, "projects.html", {
+    "board": board,
+    "to_assign_count": len(board["To Be Assigned"]),
+    "team_members": User.objects.all(),
+    "filters": request.GET,
+    "active_page": "projects",
+})
 
-
-
-
-# ------------------------
-# Project Sessions
-# ------------------------
 # ------------------------
 # Project Sessions
 # ------------------------
@@ -334,12 +366,220 @@ def save_client_selection(request, token):
 
     return JsonResponse({"success": True})
 
+from collections import OrderedDict
+
 def projects_list(request):
+    projects = Project.objects.prefetch_related("tasks", "team")
+    projects = apply_project_filters(request, projects)
+
+    grouped = OrderedDict([
+        ("pre_production", []),
+        ("selection", []),
+        ("post_production", []),
+    ])
+
+    for project in projects:
+        tasks = project.tasks.all()
+
+        # PRE PRODUCTION
+        if project.status == "pre_production":
+            project.stage_tasks = [
+                ("Planning & Wedding", *project.task_progress("Planning")),
+                ("Hard Disk", *project.task_progress("Hard Disk")),
+                ("Pre Wedding Shoot", *project.task_progress("Pre Wedding")),
+                ("Main Coverage", *project.task_progress("Main Coverage")),
+            ]
+
+        # SELECTION
+        elif project.status == "selection":
+            project.stage_tasks = [
+                (task.title, 1 if task.is_completed else 0, 1)
+                for task in tasks.filter(stage="selection")
+            ]
+
+        # POST PRODUCTION
+        elif project.status == "post_production":
+            project.stage_tasks = [
+                (task.title, 1 if task.is_completed else 0, 1)
+                for task in tasks.filter(stage="post")
+            ]
+
+        if project.status in grouped:
+            grouped[project.status].append(project)
+
     return render(request, "projects_list.html", {
+    "grouped_projects": grouped,
+    "team_members": User.objects.all(),
+    "filters": request.GET,
+    "active_page": "projects",
+})
+
+
+
+def projects_overview(request):
+    projects = Project.objects.prefetch_related("tasks", "team")
+    projects = apply_project_filters(request, projects)
+
+    pending_internal = []
+    awaiting_client = []
+
+    for project in projects:
+        pending_tasks = project.tasks.filter(is_completed=False)
+
+        # Example logic:
+        # If selection stage → awaiting client
+        if project.status == "selection":
+            awaiting_client.append(project)
+        else:
+            if pending_tasks.exists():
+                pending_internal.append(project)
+
+        project.pending_tasks = pending_tasks
+
+    return render(request, "projects_overview.html", {
+        "pending_internal": pending_internal,
+        "awaiting_client": awaiting_client,
+        "team_members": User.objects.all(),
+        "filters": request.GET,
         "active_page": "projects",
     })
 
-def projects_overview(request):
-    return render(request, "projects_overview.html", {
-        "active_page": "projects",
+from django.template.loader import render_to_string
+
+def projects_filtered_partial(request):
+    projects = Project.objects.prefetch_related("tasks", "team")
+    projects = apply_project_filters(request, projects)
+
+    view_type = request.GET.get("view")
+
+    if view_type == "board":
+        # rebuild board structure
+        board = {
+            "To Be Assigned": [],
+            "Pre Production": [],
+            "Selection": [],
+            "Post Production": [],
+            "Completed": [],
+        }
+
+        for project in projects:
+            if project.status == "to_assign":
+                board["To Be Assigned"].append(project)
+            elif project.status == "pre_production":
+                board["Pre Production"].append(project)
+            elif project.status == "selection":
+                board["Selection"].append(project)
+            elif project.status == "post_production":
+                board["Post Production"].append(project)
+            elif project.status == "completed":
+                board["Completed"].append(project)
+
+        html = render_to_string("partials/board_content.html", {
+            "board": board
+        }, request=request)
+
+    elif view_type == "list":
+        grouped = {
+            "pre_production": [],
+            "selection": [],
+            "post_production": [],
+        }
+
+        for project in projects:
+            if project.status in grouped:
+                grouped[project.status].append(project)
+
+        html = render_to_string("partials/list_content.html", {
+            "grouped_projects": grouped
+        }, request=request)
+
+    else:  # overview
+        pending_internal = []
+        awaiting_client = []
+
+        for project in projects:
+            pending_tasks = project.tasks.filter(is_completed=False)
+            project.pending_tasks = pending_tasks
+
+            if project.status == "selection":
+                awaiting_client.append(project)
+            elif pending_tasks.exists():
+                pending_internal.append(project)
+
+        html = render_to_string("partials/overview_content.html", {
+            "pending_internal": pending_internal,
+            "awaiting_client": awaiting_client,
+        }, request=request)
+
+    return JsonResponse({"html": html})
+
+from collections import defaultdict
+from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+from django.utils.timezone import now
+from django.db.models import Q
+from projects.models import Project
+
+
+def sessions_view(request):
+    filter_type = request.GET.get("type", "upcoming")
+    search_query = request.GET.get("search", "").strip()
+
+    today = now().date()
+
+    # Show all active session projects
+    projects = Project.objects.filter(
+        status__in=["pre_production", "selection", "post_production"]
+    ).prefetch_related("team")
+
+    # -------- FILTER BY TYPE --------
+    if filter_type == "past":
+        projects = projects.filter(start_date__isnull=False, start_date__lt=today)
+
+    elif filter_type == "decided":
+        projects = projects.filter(start_date__isnull=True)
+
+    else:  # upcoming
+        projects = projects.filter(start_date__isnull=False, start_date__gte=today)
+
+    # -------- SEARCH --------
+    if search_query:
+        projects = projects.filter(
+            Q(client_name__icontains=search_query) |
+            Q(event_type__icontains=search_query) |
+            Q(code__icontains=search_query)
+        )
+
+    projects = projects.order_by("start_date")
+
+    # -------- GROUP BY MONTH --------
+    grouped_sessions = defaultdict(list)
+
+    for project in projects:
+        if project.start_date:
+            month = project.start_date.strftime("%B %Y")
+        else:
+            month = "To Be Decided"
+
+        grouped_sessions[month].append(project)
+
+    context = {
+        "grouped_sessions": dict(grouped_sessions),
+        "active_tab": filter_type,
+    }
+
+    # -------- AJAX --------
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        html = render_to_string(
+            "partials/sessions_list.html",
+            context,
+            request=request
+        )
+        return JsonResponse({"html": html})
+
+    return render(request, "sessions.html", {
+        **context,
+        "active_page": "sessions"
     })
+

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects_overview.css' %}">
+{% endblock %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <!-- ================= HEADER ================= -->
+  <section class="overview">
+    <h1 class="page-title">Projects</h1>
+
+    <div class="views">
+
+      <!-- Board -->
+      <div class="view-item {% if 'board' in request.path %}active{% endif %}">
+        <a href="{% url 'projects:board' %}">
+          {% if 'board' in request.path %}
+            <img src="{% static 'images/filled board view.svg' %}" class="icon">
+          {% else %}
+            <img src="{% static 'images/solid board view.svg' %}" class="icon">
+          {% endif %}
+          Board View
+        </a>
+      </div>
+
+      <!-- LIST -->
+      <div class="view-item {% if 'list' in request.path %}active{% endif %}">
+        <a href="{% url 'projects:list' %}">
+          {% if 'list' in request.path %}
+            <img src="{% static 'images/filled list view.svg' %}" class="icon">
+          {% else %}
+            <img src="{% static 'images/solid list view.svg' %}" class="icon">
+          {% endif %}
+          List View
+        </a>
+      </div>
+
+      <!-- OVERVIEW -->
+      <div class="view-item {% if 'overview' in request.path %}active{% endif %}">
+        <a href="{% url 'projects:overview' %}">
+          {% if 'overview' in request.path %}
+            <img src="{% static 'images/filled project overview.svg' %}" class="icon">
+          {% else %}
+            <img src="{% static 'images/solid project overview.svg' %}" class="icon">
+          {% endif %}
+          Projects Overview
+        </a>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-wrapper">
+        <button id="filterToggle" class="filter-btn">
+          <img src="{% static 'images/filter.svg' %}" class="icon">
+          Filters
+        </button>
+
+        <div id="filtersPanel" class="filter-dropdown hidden">
+          {% include "partials/project_filters.html" %}
+        </div>
+      </div>
+
+
+    </div>
+  </section>
+
+
+  <!-- ================= TOGGLE ================= -->
+  <div class="overview-toggle">
+    <button class="toggle-btn active" data-target="internal">
+      Pending Internally
+    </button>
+    <button class="toggle-btn" data-target="client">
+      Awaiting Client Response
+    </button>
+  </div>
+
+
+  <!-- ================= TABLE ================= -->
+  <div class="overview-table">
+
+    <!-- Table Header -->
+    <div class="overview-head">
+      <div>Project ID</div>
+      <div>Project Name</div>
+      <div>Event Date</div>
+      <div>Assigned To</div>
+      <div>Pending Tasks</div>
+    </div>
+
+    <!-- INTERNAL -->
+    <div class="overview-body" id="internal">
+      {% for project in pending_internal %}
+      <div class="overview-row">
+
+        <div>{{ project.code }}</div>
+
+        <div class="name">
+          {{ project.client_name }} {{ project.event_type }}
+        </div>
+
+        <div>
+          {{ project.start_date }} – {{ project.end_date }}
+        </div>
+
+        <div class="avatars">
+          {% for member in project.team.all %}
+          <div class="avatar">
+            {{ member.username|slice:":2"|upper }}
+          </div>
+          {% empty %}
+          <div class="avatar empty"></div>
+          {% endfor %}
+        </div>
+
+        <div>
+          {% for task in project.pending_tasks %}
+          <span class="task-pill">{{ task.title }}</span>
+          {% empty %}
+          <span class="task-pill">No Pending Tasks</span>
+          {% endfor %}
+        </div>
+
+      </div>
+      {% empty %}
+      <div class="empty-row">No pending internal projects</div>
+      {% endfor %}
+    </div>
+
+
+    <!-- CLIENT -->
+    <div class="overview-body hidden" id="client">
+      {% for project in awaiting_client %}
+      <div class="overview-row">
+
+        <div>{{ project.code }}</div>
+
+        <div class="name">
+          {{ project.client_name }} {{ project.event_type }}
+        </div>
+
+        <div>
+          {{ project.start_date }} – {{ project.end_date }}
+        </div>
+
+        <div class="avatars">
+          {% for member in project.team.all %}
+          <div class="avatar">
+            {{ member.username|slice:":2"|upper }}
+          </div>
+          {% empty %}
+          <div class="avatar empty"></div>
+          {% endfor %}
+        </div>
+
+        <div>
+          <span class="task-pill">Waiting for client selection</span>
+        </div>
+
+      </div>
+      {% empty %}
+      <div class="empty-row">No client pending projects</div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{% static 'js/projects_overview.js' %}"></script>
+
+<script>
+  // Toggle Tabs
+  const buttons = document.querySelectorAll(".toggle-btn");
+  const sections = document.querySelectorAll(".overview-body");
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      buttons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      sections.forEach(section => {
+        section.classList.add("hidden");
+      });
+
+      document.getElementById(btn.dataset.target)
+              .classList.remove("hidden");
+    });
+  });
+
+  // Filter Toggle
+  const toggle = document.getElementById("filterToggle");
+  const panel = document.getElementById("filtersPanel");
+
+  toggle.addEventListener("click", function (e) {
+    e.stopPropagation();
+    panel.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+      panel.classList.add("hidden");
+    }
+  });
+</script>
+{% endblock %}

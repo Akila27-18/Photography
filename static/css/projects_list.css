@@ -1,0 +1,258 @@
+/* =================================================
+   PROJECTS LIST VIEW
+================================================= */
+
+/* ================= TOP NAVIGATION ================= */
+
+.views {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+.view-item {
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.view-item a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #000;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.view-item a:hover {
+  color: #dc2626;
+}
+
+.view-item.active a {
+  color: #dc2626;
+}
+
+.view-item.active::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #dc2626;
+  border-radius: 3px;
+}
+
+/* ================= FILTER ================= */
+
+.filter-wrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filter-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.filter-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 340px;
+  background: #ffffff;
+  border: 1px solid #dc2626;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+  z-index: 1000;
+  animation: fadeSlide 0.2s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-dropdown label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.filter-dropdown input,
+.filter-dropdown select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+}
+
+.filter-dropdown button {
+  width: 100%;
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-dropdown button:hover {
+  background: #000000;
+}
+/* ================= TABLE ================= */
+
+.projects-list-wrapper {
+  margin-top: 1.5rem;
+}
+
+.list-table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.list-head {
+  display: grid;
+  grid-template-columns: 110px 240px 200px 160px 1fr 150px;
+  padding: 14px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #e1e4ea;
+  color: #374151;
+}
+
+.list-section {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.section-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.list-row {
+  display: grid;
+  grid-template-columns: 110px 240px 200px 160px 1fr 150px;
+  align-items: center;
+  padding: 14px 20px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #e5e7eb;
+  transition: 0.2s ease;
+}
+
+.list-row:hover {
+  background: #f9fafb;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.code { color: #6b7280; }
+.name { font-weight: 600; }
+.date { color: #374151; }
+
+/* ================= AVATARS ================= */
+
+.avatars {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -8px;
+  border: 2px solid #fff;
+}
+
+.avatar:first-child { margin-left: 0; }
+
+.avatar.empty {
+  background: #d1d5db;
+  color: transparent;
+}
+
+/* ================= TASK ================= */
+
+.task-pill {
+  background: #f3f4f6;
+  border: 1px solid #6b7280;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+/* ================= STATUS ================= */
+
+.status-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.yellow {
+  background: #fef9c3;
+  color: #ca8a04;
+  border: 1px solid #ca8a04;
+}
+
+.red {
+  background: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.green {
+  background: #dcfce7;
+  color: #22c55e;
+  border: 1px solid #22c55e;
+}

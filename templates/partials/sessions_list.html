@@ -1,0 +1,81 @@
+{% if grouped_sessions %}
+
+    {% for month, projects in grouped_sessions.items %}
+        <h3 class="month-title">{{ month }}</h3>
+
+        {% for project in projects %}
+
+        <div class="session-card 
+    {% if project.status == 'pre_production' or project.status == 'post_production' %}
+        in-progress
+    {% else %}
+        pending
+    {% endif %}"
+    data-url="{% if project.status == 'pre_production' or project.status == 'post_production' %}
+        {% url 'projects:project_sessions' project.id %}
+    {% else %}
+        {% url 'projects:board' %}
+    {% endif %}"
+>
+
+
+            <!-- DATE -->
+            <div class="date-section">
+                <div class="day">{{ project.start_date|date:"D" }}</div>
+                <div class="date">{{ project.start_date|date:"d" }}</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- TIME + VENUE -->
+            <div class="time-block">
+                <div class="time-row">
+                    ⏰ {{ project.time|time:"h:i A" }}
+                </div>
+                <div class="venue-row">
+                    📍 {{ project.venue }}
+                </div>
+            </div>
+
+            <!-- TITLE + TEAM -->
+            <div class="content-block">
+                <div class="title-block">
+                    {{ project.client_name }} {{ project.event_type }}
+                </div>
+
+                <div class="team-block">
+                    {% if project.team.exists %}
+                        <div class="avatars">
+                            {% for member in project.team.all|slice:":5" %}
+                                <div class="avatar">
+                                    {{ member.username|slice:":2"|upper }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <a href="{% url 'projects:board' %}"
+                           class="assign-team-btn"
+                           onclick="event.stopPropagation();">
+                            + Assign Team
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- STATUS -->
+            <div class="status-block">
+                {% if project.status == "pre_production" or project.status == "post_production" %}
+                    <span class="status-badge progress">In-Progress</span>
+                {% else %}
+                    <span class="status-badge pending-badge">Pending</span>
+                {% endif %}
+            </div>
+
+        </div>
+
+        {% endfor %}
+    {% endfor %}
+
+{% else %}
+    <p class="empty-text">No sessions available.</p>
+{% endif %}

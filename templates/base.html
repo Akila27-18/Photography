@@ -33,19 +33,15 @@
       <span>Projects</span>
     </a>
     
-    <!-- <a href="{% url 'projects:board' %}" 
-   class="nav-item {% if active_page == 'projects' %}active{% endif %}">
+    <a href="{% url 'projects:sessions' %}"
+   class="nav-item {% if active_page == 'sessions' %}active{% endif %}">
     
-    <img src="{% static 'images/' %}{% if active_page == 'projects' %}project.svg{% else %}project.svg{% endif %}">
+    <img src="{% static 'images/' %}{% if active_page == 'sessions' %}session-filled.png{% else %}session.svg{% endif %}" 
+         alt="Sessions">
     
-    <span>Projects</span>
-</a> -->
+    <span>Session</span>
+</a>
 
-
-    <a href="#" class="nav-item {% if active_page == 'session' %}active{% endif %}">
-      <img src="{% static 'images/' %}{% if active_page == 'session' %}session.svg{% else %}session.svg{% endif %}">
-      <span>Session</span>
-    </a>
 
     <a href="#" class="nav-item {% if active_page == 'invoices' %}active{% endif %}">
       <img src="{% static 'images/' %}{% if active_page == 'invoices' %}invoice.svg{% else %}invoice.svg{% endif %}">
