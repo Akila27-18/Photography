@@ -12,9 +12,7 @@
 
   <!-- Tabs -->
   <section class="tabs">
-    <div class="tab active">Upcoming Event</div>
-    <div class="tab">Past Event</div>
-    <div class="tab">To be decided</div>
+    <div class="tab active">Event Details</div>
   </section>
 
   <!-- Project Details -->
@@ -33,7 +31,7 @@
     <div class="detail-row"><strong>Venue:</strong>
       {% if request.user.is_staff %}
         <input type="text" value="{{ project.venue|default:'' }}"
-               data-field="venue" data-project-id="{{ project.id }}" />
+               data-field="venue" data-project-id="{{ project.id }}" required/>
       {% else %}
         {{ project.venue|default:'N/A' }}
       {% endif %}
@@ -42,7 +40,7 @@
     <div class="detail-row"><strong>Time:</strong>
       {% if request.user.is_staff %}
         <input type="time" value="{{ project.time|time:'H:i'|default:'' }}"
-               data-field="time" data-project-id="{{ project.id }}" />
+               data-field="time" data-project-id="{{ project.id }}" required/>
       {% else %}
         {{ project.time|time:"H:i"|default:'N/A' }}
       {% endif %}
@@ -60,11 +58,12 @@
     <div class="detail-row"><strong>Dates:</strong>
       {% if request.user.is_staff %}
         <input type="date" value="{{ project.start_date|date:'Y-m-d' }}"
-               data-field="start_date" data-project-id="{{ project.id }}" /> — 
+               data-field="start_date" data-project-id="{{ project.id }}" required/> —
         <input type="date" value="{{ project.end_date|date:'Y-m-d' }}"
-               data-field="end_date" data-project-id="{{ project.id }}" />
+               data-field="end_date" data-project-id="{{ project.id }}" required/>
       {% else %}
-        {{ project.start_date|date:"d/m/Y"|default:'N/A' }} — {{ project.end_date|date:"d/m/Y"|default:'N/A' }}
+        {{ project.start_date|date:"d/m/Y"|default:'N/A' }} —
+        {{ project.end_date|date:"d/m/Y"|default:'N/A' }}
       {% endif %}
     </div>
 
@@ -72,6 +71,7 @@
       <button id="save-project" class="btn btn-primary">Save Changes</button>
     {% endif %}
   </section>
+
 
   <!-- Team Members -->
   <section class="team-members">
@@ -114,40 +114,6 @@
         {% endfor %}
       </div>
     </div>
-    <!-- Selection -->
-<div class="team-group">
-  <h4>Selection</h4>
-
-  <!-- Team Avatars -->
-  <div class="avatars">
-    {% for member in users %}
-      {% if member.photography_role == "selection" %}
-        <div class="avatar {% if member in project.team.all %}active{% endif %}"
-             {% if request.user.is_staff %}
-               data-user-id="{{ member.id }}" data-project-id="{{ project.id }}"
-             {% endif %}
-             title="{{ member.username }}">
-          {{ member.username|slice:":2"|upper }}
-        </div>
-      {% endif %}
-    {% endfor %}
-  </div>
-
-  <!-- Client Selection Link -->
-  <!-- Client Selection Link -->
-    {% if project.status == "selection" and project.selection %}
-    <div style="margin-top:15px;">
-        <a href="{% url 'projects:client_selection' project.selection.token %}"
-          class="selection-link-btn">
-          Open Client Selection Page
-        </a>
-    </div>
-    {% endif %}
-    
-
-
-</div>
-
 
     <!-- Post Production -->
     <div class="team-group">
@@ -168,7 +134,18 @@
     </div>
 
     {% endwith %}
+
+    <!-- Client Selection Link -->
+    {% if project.status == "selection" and project.selection %}
+      <div class="selection-wrapper">
+        <a href="{% url 'projects:client_selection' project.selection.token %}"
+           class="selection-link-btn">
+          Open Client Selection Page
+        </a>
+      </div>
+    {% endif %}
   </section>
+
 
   <!-- Tasks -->
   <section class="tasks">
@@ -193,21 +170,27 @@
     {% endfor %}
   </section>
 
+
   <!-- Due Date + Notifications -->
   <section class="actions">
     <label for="due-date">Add Due Date*</label>
     {% if request.user.is_staff %}
-      <input type="date" id="due-date" name="due-date"
+      <input type="date" id="due-date"
              value="{{ project.due_date|date:'Y-m-d'|default:'' }}"
              data-field="due_date" data-project-id="{{ project.id }}">
-      <button id="send-notifications" class="btn btn-danger"
-              data-project-id="{{ project.id }}">Send Notifications</button>
+      <button id="send-notifications"
+              class="btn btn-danger"
+              data-project-id="{{ project.id }}">
+        Send Notifications
+      </button>
     {% else %}
       {{ project.due_date|date:"d/m/Y"|default:'N/A' }}
     {% endif %}
   </section>
 
 </div>
+
+
 
 {% block extra_js %}
 <script src="{% static 'js/project_sessions.js' %}"></script>

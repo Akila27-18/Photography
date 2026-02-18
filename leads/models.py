@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils import timezone
 
+
 class Lead(models.Model):
+    project_code = models.CharField(max_length=10, unique=True, null=True, blank=True)
+
     # Status choices
     STATUS_NEW = 'NEW'
     STATUS_FOLLOW = 'FOLLOW'
@@ -47,3 +50,24 @@ class Lead(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.project_code:
+            last_code = (
+                Lead.objects
+                .exclude(project_code__isnull=True)
+                .order_by('-project_code')
+                .values_list('project_code', flat=True)
+                .first()
+            )
+
+            if last_code and last_code.startswith("AK"):
+                last_number = int(last_code[2:])
+                new_number = last_number + 1
+            else:
+                new_number = 1
+
+            self.project_code = f"AK{new_number:03d}"
+
+        super().save(*args, **kwargs)
+

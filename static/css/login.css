@@ -15,37 +15,44 @@
 }
 
 body {
-    color: black;
   background: #000;
+  height: 100vh;
 }
 
-/* MAIN LAYOUT */
+/* =============================
+   MAIN LAYOUT
+============================= */
 .login-page {
   display: flex;
   height: 100vh;
   width: 100%;
 }
 
-/* LEFT IMAGE — FILL AREA */
+/* LEFT IMAGE */
 .login-left {
-  width: 50%;
-  height: 100vh;
+  flex: 1;
   background: url("../images/admin login image.png") center center / cover no-repeat;
 }
 
 /* RIGHT PANEL */
 .login-right {
-  width: 50%;
+  flex: 1;
   background: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 40px;
 }
 
-/* CARD */
+/* =============================
+   CARD
+============================= */
 .login-card {
-  width: 420px;
-  text-align: center;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* LOGO */
@@ -59,17 +66,20 @@ body {
   font-size: 26px;
   font-weight: 600;
   color: black;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
-/* ROLE SWITCH */
+/* =============================
+   ROLE SWITCH
+============================= */
 .role-switch {
   display: flex;
   justify-content: center;
   gap: 28px;
   font-size: 14px;
   color: black;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
 .role-switch input {
@@ -77,11 +87,16 @@ body {
   accent-color: var(--brand-red);
 }
 
+/* =============================
+   FORM
+============================= */
+form {
+  width: 100%;
+}
+
 /* INPUT FIELD */
 .field {
   position: relative;
-  border: 1px solid black;
-  border-radius: 6px;
   margin-bottom: 18px;
 }
 
@@ -95,16 +110,13 @@ body {
   font-size: 14px;
   color: var(--text-main);
   outline: none;
-
-  /* FIGMA HIGHLIGHT */
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+  transition: 0.2s ease;
 }
 
 .field input::placeholder {
   color: #9a9a9a;
 }
 
-/* FOCUS STATE */
 .field input:focus {
   border-color: var(--brand-red);
   background: #ffffff;
@@ -129,11 +141,68 @@ body {
 .icon img,
 .eye img {
   width: 16px;
-  height: auto;
   opacity: 0.6;
 }
 
-/* BUTTON */
+/* =============================
+   PASSWORD TOGGLE (eye open/close)
+============================= */
+.password-wrapper {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: 0.2s ease;
+}
+
+.eye-icon:hover {
+  opacity: 1;
+}
+
+/* =============================
+   REMEMBER + FORGOT
+============================= */
+.remember-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0 20px 0;
+  font-size: 13px;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.remember-label input {
+  accent-color: var(--brand-red);
+}
+
+.forgot-link {
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: 0.2s ease;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  color: var(--brand-red);
+}
+
+/* =============================
+   BUTTON
+============================= */
 .login-btn {
   width: 100%;
   height: 48px;
@@ -145,22 +214,22 @@ body {
   font-weight: 600;
   letter-spacing: 0.4px;
   cursor: pointer;
-  margin-top: 10px;
+  transition: 0.2s ease;
 }
 
 .login-btn:hover {
   background: #8c242a;
 }
 
-/* FORGOT */
-.forgot-link {
-  display: block;
-  margin-top: 22px;
-  font-size: 13px;
-  color: var(--text-muted);
-  text-decoration: none;
-}
+/* =============================
+   RESPONSIVE
+============================= */
+@media (max-width: 900px) {
+  .login-left {
+    display: none;
+  }
 
-.forgot-link:hover {
-  text-decoration: underline;
+  .login-right {
+    flex: 1;
+  }
 }

@@ -582,4 +582,9 @@ def sessions_view(request):
         **context,
         "active_page": "sessions"
     })
-
+from invoices.models import Invoice
+def invoice_list(request):
+    invoices = Invoice.objects.all().order_by("-created_at")
+    return render(request, "invoice_list.html", {
+        "invoices": invoices
+    })

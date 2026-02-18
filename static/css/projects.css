@@ -280,14 +280,15 @@
   align-items: center;
   gap: 6px;
   background: #ffffff;
-  border: 1px solid #dc2626;
-  color: #dc2626;
+  border: 1px solid black;
+  color: black;
   padding: 8px 16px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s ease;
 }
+
 
 .filter-btn:hover {
   background: #dc2626;
@@ -417,4 +418,12 @@
 }
 .count::before {
     content: '0';
+}
+
+.modal-overlay { display: none; }
+.modal-overlay.active { display: flex; }
+
+.highlight {
+    border: 2px solid #FFA500; /* orange highlight */
+    transition: border 0.5s;
 }

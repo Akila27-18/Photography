@@ -29,7 +29,6 @@ function formatDate(dateStr) {
     .replace(/ /g, "-");
 }
 
-
 function hideConflictWarning(form) {
   const box = form.querySelector(".conflict-warning");
   if (box) box.style.display = "none";
@@ -53,21 +52,14 @@ document.getElementById("newLeadBtn").onclick = () => {
 };
 
 /* ======================================================
-   CONFLICT CHECK (FIXED)
+   CONFLICT CHECK
 ====================================================== */
 async function checkLeadConflict(form) {
   const start = form.querySelector('[name="event_start_date"]').value;
-
   let session =
     form.querySelector('[name="event_start_session"]')?.value || "MOR";
 
-  const sessionMap = {
-    Morning: "MOR",
-    Evening: "EVE",
-    MOR: "MOR",
-    EVE: "EVE",
-  };
-
+  const sessionMap = { Morning: "MOR", Evening: "EVE", MOR: "MOR", EVE: "EVE" };
   session = sessionMap[session] || "MOR";
 
   if (!start) return false;
@@ -95,8 +87,7 @@ function showConflictWarning(form, conflicts, onProceed = null) {
       ${onProceed ? `
         <button type="button" class="btn-warning proceed-btn">
           Proceed anyway
-        </button>
-      ` : ""}
+        </button>` : ""}
     </div>
   `;
 
@@ -110,10 +101,8 @@ function showConflictWarning(form, conflicts, onProceed = null) {
   }
 }
 
-
-
 /* ======================================================
-   CREATE LEAD CARD (NO ICON CHANGE)
+   CREATE LEAD CARD
 ====================================================== */
 function createLeadCard(lead) {
   const card = document.createElement("div");
@@ -121,9 +110,13 @@ function createLeadCard(lead) {
   card.dataset.id = lead.id;
   card.dataset.status = lead.status;
 
-  Object.keys(lead).forEach(k => {
-    card.dataset[k] = lead[k] !== null ? lead[k] : "";
-  });
+  card.dataset.name = (lead.name || "").toLowerCase();
+  card.dataset.phone = (lead.phone || "").toLowerCase();
+  card.dataset.email = (lead.email || "").toLowerCase();
+  card.dataset.place = (lead.event_place || "").toLowerCase();
+  card.dataset.eventType = (lead.event_type || "").toLowerCase();
+  card.dataset.amount = lead.amount || 0;
+  card.dataset.date = lead.event_start_date || "";
 
   const showFollowup =
     lead.followup_date &&
@@ -159,14 +152,12 @@ function createLeadCard(lead) {
           </span>
         </div>
 
-       ${showFollowup ? `
+        ${showFollowup ? `
         <div class="row followup">
           <img src="/static/images/icon3.svg">
           <span class="follow-date">${formatDate(lead.followup_date)}</span>
           <span class="due-badge">DUE</span>
-        </div>` 
-        : ""}
-
+        </div>` : ""}
 
         <div class="row amount">
           <img src="/static/images/icon4.svg">
@@ -175,9 +166,9 @@ function createLeadCard(lead) {
       </div>
 
       <div class="card-back">
-      <div class="lead-header">
+        <div class="lead-header">
           <span class="lead-name">${lead.name}</span>
-           <div class="lead-icons">
+          <div class="lead-icons">
             <span class="icon edit-icon">✎</span>
             <span class="icon contact-icon">➤</span>
           </div>
@@ -186,42 +177,32 @@ function createLeadCard(lead) {
         ${lead.phone ? `<div>📞 ${lead.phone}</div>` : ""}
         ${lead.email ? `<div>📨 ${lead.email}</div>` : ""}
         ${lead.event_place ? `<div>📍 ${lead.event_place}</div>` : ""}
-        ${
-          lead.advance_amount
-            ? `<div>$ Advance: ₹ ${lead.advance_amount}</div>`
-            : ""
-        }
-        ${
-          lead.remaining_amount
-            ? `<div>$ To be paid: ₹ ${lead.amount-lead.advance_amount}</div>`
-            : ""
-        }
+        ${lead.advance_amount ? `<div>$ Advance: ₹ ${lead.advance_amount}</div>` : ""}
+        ${lead.remaining_amount ? `<div>$ To be paid: ₹ ${lead.amount - lead.advance_amount}</div>` : ""}
       </div>
 
     </div>
   `;
 
-  /* ===== FLIP ===== */
+  // Flip
   const contactBtn = card.querySelector(".contact-icon");
-const cardBack = card.querySelector(".card-back");
+  const cardBack = card.querySelector(".card-back");
 
-if (contactBtn) {
-  contactBtn.onclick = e => {
-    e.stopPropagation();
-    card.classList.toggle("flipped");
-  };
-}
+  if (contactBtn) {
+    contactBtn.onclick = e => {
+      e.stopPropagation();
+      card.classList.toggle("flipped");
+    };
+  }
 
-if (cardBack) {
-  cardBack.onclick = e => {
-    e.stopPropagation();
-    card.classList.remove("flipped");
-  };
-}
+  if (cardBack) {
+    cardBack.onclick = e => {
+      e.stopPropagation();
+      card.classList.remove("flipped");
+    };
+  }
 
- 
-
-  /* ===== EDIT ===== */
+  // Edit
   card.querySelector(".edit-icon").onclick = e => {
     e.stopPropagation();
     openEdit(card);
@@ -231,35 +212,37 @@ if (cardBack) {
 }
 
 /* ======================================================
-   LOAD LEADS + SEARCH
+   LOAD LEADS
 ====================================================== */
-const autoMoved = new Set();
+function renderBoard(data) {
+  ["NEW", "FOLLOW", "ACCEPTED", "LOST"].forEach(status => {
+    const col = document.getElementById(`cards-${status}`);
+    col.innerHTML = "";
+
+    data[status].forEach(lead => {
+      autoMoveToLost(lead);
+      col.appendChild(createLeadCard(lead));
+    });
+
+    document.getElementById(`count-${status.toLowerCase()}`).innerText =
+      data[status].length;
+  });
+}
 
 function loadLeads(query = "") {
   fetch(`/leads/list/?q=${encodeURIComponent(query)}`)
     .then(res => res.json())
     .then(data => {
-      ["NEW", "FOLLOW", "ACCEPTED", "LOST"].forEach(status => {
-        const col = document.getElementById(`cards-${status}`);
-        col.innerHTML = "";
-
-        data[status].forEach(lead => {
-          autoMoveToLost(lead);
-          col.appendChild(createLeadCard(lead));
-        });
-
-        document.getElementById(
-          `count-${status.toLowerCase()}`
-        ).innerText = data[status].length;
-      });
-
+      renderBoard(data);
       initSortable();
       updateAmounts();
+      applyFilters();
     });
 }
 
+
 /* ======================================================
-   AUTO MOVE TO LOST (SAFE)
+   AUTO MOVE TO LOST
 ====================================================== */
 function autoMoveToLost(lead) {
   if (!lead.event_end_date) return;
@@ -267,12 +250,9 @@ function autoMoveToLost(lead) {
 
   const endDate = new Date(lead.event_end_date);
   const todayDate = new Date();
-
-  // Remove time from BOTH dates
   endDate.setHours(0, 0, 0, 0);
   todayDate.setHours(0, 0, 0, 0);
 
-  // If event is today or future → do nothing
   if (endDate >= todayDate) return;
 
   fetch(`/leads/update-status/${lead.id}/`, {
@@ -281,42 +261,26 @@ function autoMoveToLost(lead) {
       "Content-Type": "application/json",
       "X-CSRFToken": getCSRF()
     },
-    credentials: "same-origin", // 🔑 IMPORTANT for Django
+    credentials: "same-origin",
     body: JSON.stringify({ status: "LOST" })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Failed to update status");
-    return res.json();
-  })
-  .then(data => {
-    console.log(`Lead ${lead.id} moved to LOST`);
-  })
-  .catch(err => {
-    console.error("Auto move failed:", err);
   });
 }
-
-
 
 /* ======================================================
    ADD LEAD
 ====================================================== */
 addForm.addEventListener("submit", async e => {
   e.preventDefault();
-
   hideConflictWarning(addForm);
 
   if (!addForm.event_end_date.value && addForm.event_start_date.value) {
-    addForm.event_end_date.value = addDays(
-      addForm.event_start_date.value,
-      1
-    );
+    addForm.event_end_date.value = addDays(addForm.event_start_date.value, 1);
   }
 
   const conflicts = await checkLeadConflict(addForm);
   if (conflicts) {
     showConflictWarning(addForm, conflicts);
-    return; // ⛔ stop submit
+    return;
   }
 
   fetch("/leads/add/", {
@@ -329,19 +293,17 @@ addForm.addEventListener("submit", async e => {
   });
 });
 
-
 /* ======================================================
    EDIT LEAD
 ====================================================== */
 editForm.addEventListener("submit", async e => {
   e.preventDefault();
-
   hideConflictWarning(editForm);
 
   const conflicts = await checkLeadConflict(editForm);
   if (conflicts) {
     showConflictWarning(editForm, conflicts);
-    return; // ⛔ stop submit
+    return;
   }
 
   fetch("/leads/edit/", {
@@ -378,7 +340,6 @@ function initSortable() {
     new Sortable(col, {
       group: "leads",
       animation: 180,
-
       onAdd: evt => {
         const card = evt.item;
         const leadId = card.dataset.id;
@@ -397,21 +358,14 @@ function initSortable() {
         .then(async res => {
           if (res.status === 409) {
             const data = await res.json();
-
-            // ⬅️ move card back visually
             oldCol.appendChild(card);
-
-            // 🔔 show in-modal warning
-            openEdit(card); // open edit modal first
-
+            openEdit(card);
             setTimeout(() => {
               showConflictWarning(editForm, data.conflicts, () => {
                 forceAccept(leadId);
                 editModal.style.display = "none";
               });
             }, 50);
-
-
             throw new Error("Conflict");
           }
 
@@ -431,63 +385,17 @@ function forceAccept(leadId) {
       "X-CSRFToken": getCSRF()
     },
     credentials: "same-origin",
-    body: JSON.stringify({
-      status: "ACCEPTED",
-      override: true
-    })
+    body: JSON.stringify({ status: "ACCEPTED", override: true })
   }).then(() => loadLeads());
 }
 
-/* ======================================================
-   GLOBAL SEARCH
-====================================================== */
-let searchTimer = null;
-document.getElementById("globalSearch")?.addEventListener("input", e => {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => {
-    loadLeads(e.target.value);
-  }, 300);
-});
-
-
-document.querySelectorAll(".modal-close").forEach(btn => {
-  btn.onclick = () => {
-    btn.closest(".modal").style.display = "none";
-  };
-});
-
-document.querySelectorAll(".modal-close").forEach(btn => {
-  btn.onclick = () => {
-    btn.closest(".modal").style.display = "none";
-  };
-});
-
-document.addEventListener("click", function (e) {
-  // Close via X button
-  if (e.target.classList.contains("modal-close")) {
-    e.target.closest(".modal").style.display = "none";
-  }
-
-  // Close by clicking overlay
-  if (e.target.classList.contains("modal")) {
-    e.target.style.display = "none";
-  }
-});
-
-/* ======================================================
-   INIT
-====================================================== */
-document.addEventListener("DOMContentLoaded", () => loadLeads());
 /* ======================================================
    OPEN EDIT MODAL
 ====================================================== */
 function openEdit(card) {
   hideConflictWarning(editForm);
-
-  // Fill hidden id
   editForm.id.value = card.dataset.id || "";
 
-  // Populate fields safely
   [
     "name",
     "event_type",
@@ -502,10 +410,118 @@ function openEdit(card) {
     "followup_date",
     "advance_amount"
   ].forEach(field => {
-    if (editForm[field]) {
-      editForm[field].value = card.dataset[field] || "";
-    }
+    if (editForm[field]) editForm[field].value = card.dataset[field] || "";
   });
 
   editModal.style.display = "flex";
 }
+
+/* ======================================================
+   INIT
+====================================================== */
+document.addEventListener("DOMContentLoaded", function () {
+
+  loadLeads();
+  initModals();
+  /* ---------------- GLOBAL SEARCH ---------------- */
+  const searchInput = document.getElementById("globalSearch");
+
+    if (searchInput) {
+      let searchTimer;
+
+      searchInput.addEventListener("input", function () {
+        clearTimeout(searchTimer);
+
+        const query = this.value.trim();
+
+        searchTimer = setTimeout(() => {
+          loadLeads(query);
+        }, 300);
+
+      });
+  }
+
+  // FILTER INIT
+  const filterBtn = document.getElementById("filterBtn");
+  const dropdown = document.getElementById("filterDropdown");
+  const statusCheckboxes = document.querySelectorAll("#filterDropdown input[type='checkbox']");
+  const minAmountInput = document.getElementById("minAmount");
+  const maxAmountInput = document.getElementById("maxAmount");
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  const clearBtn = document.getElementById("clearFilters");
+
+  filterBtn?.addEventListener("click", e => {
+    e.stopPropagation();
+    dropdown?.classList.toggle("show");
+  });
+
+  document.addEventListener("click", e => {
+    if (dropdown && !dropdown.contains(e.target) && !e.target.closest("#filterBtn")) {
+      dropdown.classList.remove("show");
+    }
+  });
+
+  statusCheckboxes.forEach(cb => cb.addEventListener("change", applyFilters));
+  minAmountInput?.addEventListener("input", applyFilters);
+  maxAmountInput?.addEventListener("input", applyFilters);
+  startDateInput?.addEventListener("change", applyFilters);
+  endDateInput?.addEventListener("change", applyFilters);
+
+  clearBtn?.addEventListener("click", () => {
+    statusCheckboxes.forEach(cb => cb.checked = true);
+    if (minAmountInput) minAmountInput.value = "";
+    if (maxAmountInput) maxAmountInput.value = "";
+    if (startDateInput) startDateInput.value = "";
+    if (endDateInput) endDateInput.value = "";
+    applyFilters();
+  });
+
+});
+
+/* ======================================================
+   MODAL OPEN/CLOSE FIX
+====================================================== */
+
+// Open Add Modal
+document.getElementById("newLeadBtn")?.addEventListener("click", () => {
+  addForm.reset();
+  addModal.style.display = "flex";
+});
+
+// Close buttons using delegation
+document.addEventListener("click", e => {
+  // Add modal close
+  if (e.target.closest("#addModal .close-btn") || e.target === addModal) {
+    addModal.style.display = "none";
+  }
+  // Edit modal close
+  if (e.target.closest("#editModal .close-btn") || e.target === editModal) {
+    editModal.style.display = "none";
+  }
+});
+
+/* ======================================================
+   MODAL OPEN / CLOSE
+====================================================== */
+function initModals() {
+  const modals = [addModal, editModal];
+
+  modals.forEach(modal => {
+    // Close when clicking outside modal-content
+    modal.addEventListener("click", e => {
+      if (e.target === modal) modal.style.display = "none";
+    });
+
+    // Close buttons
+    modal.querySelectorAll(".modal-close").forEach(btn => {
+      btn.addEventListener("click", () => modal.style.display = "none");
+    });
+  });
+}
+
+// Open Add Modal
+document.getElementById("newLeadBtn")?.addEventListener("click", () => {
+  addForm.reset();
+  addModal.style.display = "flex";
+});

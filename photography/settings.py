@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'core',
     'leads.apps.LeadsConfig',
     'projects.apps.ProjectsConfig',  # <-- use AppConfig here
+    # 'invoice.apps.InvoiceConfig',
+    'invoices',
 ]
 
 

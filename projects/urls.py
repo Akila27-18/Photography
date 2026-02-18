@@ -15,7 +15,7 @@ urlpatterns = [
     path("update-status/", views.update_project_status, name="update_project_status"),
     path("toggle-task/", views.toggle_task, name="toggle_task"),
     path("projects/filter/", views.projects_filtered_partial, name="projects_filter"),
-
+    
 
     # Client selection (only token version)
     path("selection/<uuid:token>/", views.client_selection, name="client_selection"),
@@ -23,5 +23,7 @@ urlpatterns = [
 
     # Session management
     path("sessions/", views.sessions_view, name="sessions"),
+    # Invoice URLs
+    path("invoices/", views.invoice_list, name="invoice_list"),
 
 ]

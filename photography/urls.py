@@ -21,7 +21,10 @@ urlpatterns = [
 
     # redirect root to login
     path('', lambda request: redirect('/accounts/login/')),
+
+    # path('invoices/', include('invoices.urls')),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

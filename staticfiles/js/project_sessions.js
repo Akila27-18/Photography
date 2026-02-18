@@ -43,9 +43,108 @@ async function postJSON(url, data) {
 }
 
 // -----------------------------
+// Required Fields Validation
+// -----------------------------
+function validateRequiredFields() {
+  const requiredInputs = document.querySelectorAll(
+    'input[data-field][data-project-id]'
+  );
+
+  let isValid = true;
+  let firstInvalid = null;
+
+  requiredInputs.forEach(input => {
+    if (!input.value.trim()) {
+      input.classList.add("input-error");
+      if (!firstInvalid) firstInvalid = input;
+      isValid = false;
+    } else {
+      input.classList.remove("input-error");
+    }
+  });
+
+  if (!isValid) {
+    alert("All project details must be filled before proceeding.");
+    firstInvalid?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  return isValid;
+}
+
+// -----------------------------
+// Progress Bar Update
+// -----------------------------
+function updateProgressIndicator() {
+  const requiredInputs = document.querySelectorAll(
+    'input[data-field][data-project-id]'
+  );
+
+  if (!requiredInputs.length) return;
+
+  const filled = Array.from(requiredInputs).filter(input =>
+    input.value.trim()
+  ).length;
+
+  const percent = (filled / requiredInputs.length) * 100;
+
+  const bar = document.querySelector('.completion-fill');
+  if (bar) {
+    bar.style.width = percent + "%";
+  }
+}
+
+// -----------------------------
+// Enable / Disable Buttons
+// -----------------------------
+function updateActionButtons() {
+  const requiredInputs = document.querySelectorAll(
+    'input[data-field][data-project-id]'
+  );
+
+  const saveBtn = document.getElementById('save-project');
+  const notifyBtn = document.getElementById('send-notifications');
+  const statusBtns = document.querySelectorAll('[data-status-update]');
+
+  let allFilled = true;
+
+  requiredInputs.forEach(input => {
+    if (!input.value.trim()) {
+      allFilled = false;
+    }
+  });
+
+  if (saveBtn) saveBtn.disabled = !allFilled;
+  if (notifyBtn) notifyBtn.disabled = !allFilled;
+
+  statusBtns.forEach(btn => {
+    btn.disabled = !allFilled;
+  });
+
+  updateProgressIndicator();
+}
+
+// -----------------------------
+// Live Input Validation
+// -----------------------------
+document.querySelectorAll('input[data-field][data-project-id]').forEach(input => {
+  input.addEventListener('input', function () {
+
+    if (!this.value.trim()) {
+      this.classList.add("input-error");
+    } else {
+      this.classList.remove("input-error");
+    }
+
+    updateActionButtons();
+  });
+});
+
+// -----------------------------
 // Save Project Fields (Batch)
 // -----------------------------
 document.getElementById('save-project')?.addEventListener('click', async function () {
+
+  if (!validateRequiredFields()) return;
 
   if (this.dataset.processing === "true") return;
   this.dataset.processing = "true";
@@ -109,6 +208,11 @@ document.querySelectorAll('.task-toggle').forEach(cb => {
 
   cb.addEventListener('change', async function () {
 
+    if (!validateRequiredFields()) {
+      this.checked = !this.checked;
+      return;
+    }
+
     if (this.dataset.processing === "true") return;
     this.dataset.processing = "true";
 
@@ -122,8 +226,6 @@ document.querySelectorAll('.task-toggle').forEach(cb => {
 
     if (data.success) {
 
-      console.log(`Completed ${data.completed}/${data.total} tasks`);
-
       if (data.new_status === "selection") {
         alert("All tasks completed! Project moved to Selection.");
         window.location.href = "/projects/board/";
@@ -131,7 +233,7 @@ document.querySelectorAll('.task-toggle').forEach(cb => {
 
     } else {
       alert("Failed to toggle task: " + (data.error || "Unknown error"));
-      this.checked = !completed; // revert checkbox on error
+      this.checked = !completed;
     }
 
     this.dataset.processing = "false";
@@ -145,6 +247,8 @@ document.querySelectorAll('.task-toggle').forEach(cb => {
 document.querySelectorAll('[data-status-update]').forEach(button => {
 
   button.addEventListener('click', async function () {
+
+    if (!validateRequiredFields()) return;
 
     if (this.dataset.processing === "true") return;
     this.dataset.processing = "true";
@@ -174,6 +278,8 @@ document.querySelectorAll('[data-status-update]').forEach(button => {
 // -----------------------------
 document.getElementById('send-notifications')?.addEventListener('click', async function () {
 
+  if (!validateRequiredFields()) return;
+
   if (this.dataset.processing === "true") return;
   this.dataset.processing = "true";
 
@@ -190,13 +296,16 @@ document.getElementById('send-notifications')?.addEventListener('click', async f
   this.dataset.processing = "false";
 });
 
+// -----------------------------
+// Photo Selection
+// -----------------------------
 document.querySelectorAll(".photo-card").forEach(card => {
   card.addEventListener("click", function() {
     this.classList.toggle("selected");
   });
 });
 
-document.getElementById("save-selection").addEventListener("click", async function() {
+document.getElementById("save-selection")?.addEventListener("click", async function() {
 
   const selected = [];
   document.querySelectorAll(".photo-card.selected").forEach(card => {
@@ -214,3 +323,9 @@ document.getElementById("save-selection").addEventListener("click", async functi
 
   alert("Selection saved!");
 });
+
+// -----------------------------
+// Initial Setup
+// -----------------------------
+updateActionButtons();
+updateProgressIndicator();

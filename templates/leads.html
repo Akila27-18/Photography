@@ -12,41 +12,65 @@
 <div class="page-container">
 
   <!-- OVERVIEW -->
-  <section class="overview">
+ <section class="overview">
+  <div class="overview-header">
+    <!-- Left: Page title -->
     <h1 class="page-title">Leads Overview</h1>
 
-    <div class="stats-row">
-      <div class="stat"><span>Total Leads</span><strong id="totalLeads">{{ total_leads }}</strong></div>
-      <div class="stat"><span>Total Amount</span><strong id="totalAmount">₹ {{ total_amount|intcomma }}</strong></div>
-      <div class="stat"><span>Accepted</span><strong id="acceptedAmount">₹ {{ accepted_amount|intcomma }}</strong></div>
-      <div class="stat"><span>Lost</span><strong id="lostAmount">₹ {{ lost_amount|intcomma }}</strong></div>
+    <!-- Right: Search + buttons -->
+    <div class="header-actions">
+      <div class="search-box">
+        <input
+          type="text"
+          id="globalSearch"
+          placeholder="🔎 Search...."
+          class="search-input"
+        />
+      </div>
 
-      <div class="actions">
-        <button id="newLeadBtn" class="btn-primary">+ NEW LEADS</button>
-        
-        <div class="search-box">
-            <input
-              type="text"
-              id="globalSearch"
-              placeholder="Search...."
-              class="search-input"
-            />
+      
 
-          </div>
+      <div id="filterDropdown" class="filter-dropdown advanced">
+        <h4>Status</h4>
+        <label><input type="checkbox" value="NEW" checked> New</label>
+        <label><input type="checkbox" value="FOLLOW" checked> Follow Up</label>
+        <label><input type="checkbox" value="ACCEPTED" checked> Accepted</label>
+        <label><input type="checkbox" value="LOST" checked> Lost</label>
 
-        <button id="filterBtn" class="btn-filter">
-          <img src="{% static 'images/bx_filter.png' %}" alt="Filter"> Filters
-        </button>
+        <hr>
 
-        <div id="filterDropdown" class="filter-dropdown">
-          <label><input type="checkbox" value="NEW" checked> New</label>
-          <label><input type="checkbox" value="FOLLOW" checked> Follow Up</label>
-          <label><input type="checkbox" value="ACCEPTED" checked> Accepted</label>
-          <label><input type="checkbox" value="LOST" checked> Lost</label>
-        </div>
+        <h4>Amount Range</h4>
+        <input type="number" id="minAmount" placeholder="Min amount">
+        <input type="number" id="maxAmount" placeholder="Max amount">
+
+        <hr>
+
+        <h4>Event Date Range</h4>
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+
+        <hr>
+
+        <button id="clearFilters" class="btn-danger">Clear Filters</button>
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats-row">
+    <div class="stat"><span>Total Leads</span><strong id="totalLeads">{{ total_leads }}</strong></div>
+    <div class="stat"><span>Total Amount</span><strong id="totalAmount">₹ {{ total_amount|intcomma }}</strong></div>
+    <div class="stat"><span>Accepted</span><strong id="acceptedAmount">₹ {{ accepted_amount|intcomma }}</strong></div>
+    <div class="stat"><span>Lost</span><strong id="lostAmount">₹ {{ lost_amount|intcomma }}</strong></div>
+  
+      <button id="newLeadBtn" class="btn-primary">+ NEW LEADS</button>
+
+      <button id="filterBtn" class="btn-filter">
+        <img src="{% static 'images/bx_filter.png' %}" alt="Filter"> Filters
+      </button>
+      </div>
+</section>
+
 
   <!-- BOARD -->
   <section class="leads-board-wrapper">
@@ -121,6 +145,8 @@
         <label>Follow-up Date</label><input type="date" name="followup_date">
         <label>Advance Amount</label><input type="number" name="advance_amount" min="0" placeholder="Advance">
         <div class="conflict-warning"></div>
+        <br>
+        <br>
         <button type="submit" id="addAcceptBtn" class="btn-success">Accept Lead</button>
 
         

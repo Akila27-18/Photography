@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body {
+    font-family: sans-serif;
+    padding: 40px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.invoice-title {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    text-align: left;
+}
+
+.summary {
+    width: 300px;
+    margin-left: auto;
+    margin-top: 30px;
+}
+
+.summary div {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.total {
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <div class="invoice-title">
+            Invoice {{ invoice.invoice_number }}
+        </div>
+        <div>Date: {{ invoice.created_at|date:"d M Y" }}</div>
+    </div>
+</div>
+
+<h4>Bill To:</h4>
+<p>
+    {{ invoice.project.client_name }}<br>
+    {{ invoice.project.lead.email }}<br>
+    {{ invoice.project.lead.phone }}
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Service</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ invoice.project.event_type }}</td>
+            <td>1</td>
+            <td>₹ {{ invoice.subtotal }}</td>
+            <td>₹ {{ invoice.subtotal }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="summary">
+    <div>
+        <span>Subtotal</span>
+        <span>₹ {{ invoice.subtotal }}</span>
+    </div>
+    <div>
+        <span>Advance Paid</span>
+        <span>₹ {{ invoice.paid_amount }}</span>
+    </div>
+    <div class="total">
+        <span>Total</span>
+        <span>₹ {{ invoice.total }}</span>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,73 +1,91 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const projectId = document
-    .querySelector("[data-project-id]")
-    ?.dataset.projectId;
+document.addEventListener("DOMContentLoaded", function () {
 
-  const csrfToken = document.querySelector(
-    "[name=csrfmiddlewaretoken]"
-  )?.value;
+    const tabs = document.querySelectorAll(".tab");
+    const container = document.getElementById("sessionsContent");
+    const searchInput = document.getElementById("searchInput");
 
-  const available = document.getElementById("availableTeam");
-  const preProduction = document.getElementById("preProduction");
-  const postProduction = document.getElementById("postProduction");
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentType = urlParams.get("type") || "upcoming";
 
-  if (!available || !preProduction) return;
+    // Set active tab initially
+    tabs.forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.type === currentType);
+    });
 
-  /* ===============================
-     AVAILABLE → PRE PRODUCTION
-     =============================== */
+    // ---------------- LOAD SESSIONS ----------------
+    function loadSessions(type = currentType, search = "") {
+        currentType = type;
 
-  new Sortable(available, {
-    group: {
-      name: "team",
-      pull: "clone",   // clone from available
-      put: false       // cannot drop back
-    },
-    sort: false,
-    animation: 150
-  });
+        const params = new URLSearchParams();
+        params.set("type", type);
+        if (search.trim()) params.set("search", search.trim());
 
-  new Sortable(preProduction, {
-    group: {
-      name: "team",
-      pull: false,     // cannot drag out
-      put: true        // can receive
-    },
-    animation: 150,
-
-    onAdd: function (evt) {
-      const userId = evt.item.dataset.userId;
-
-      fetch("/projects/toggle-member/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken
-        },
-        body: JSON.stringify({
-          project_id: projectId,
-          user_id: userId
+        fetch(`/projects/sessions/?${params.toString()}`, {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
         })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.success) {
-          evt.from.appendChild(evt.item); // rollback
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+            container.style.opacity = 0;
+
+            setTimeout(() => {
+                container.innerHTML = data.html;
+                container.style.opacity = 1;
+            }, 150);
+
+            window.history.pushState({}, "", `?${params.toString()}`);
+        })
+        .catch(error => console.error("Error:", error));
     }
-  });
 
-  /* ===============================
-     POST PRODUCTION (LOCKED)
-     =============================== */
+    // ---------------- TAB CLICK ----------------
+    tabs.forEach(tab => {
+        tab.addEventListener("click", function (e) {
+            e.preventDefault();
 
-  new Sortable(postProduction, {
-    group: {
-      name: "team",
-      put: false,
-      pull: false
-    },
-    animation: 150
-  });
+            tabs.forEach(t => t.classList.remove("active"));
+            this.classList.add("active");
+
+            loadSessions(this.dataset.type, searchInput.value);
+        });
+    });
+
+    // ---------------- SEARCH (DEBOUNCE) ----------------
+    let searchTimeout;
+    if (searchInput) {
+        searchInput.addEventListener("keyup", function () {
+            clearTimeout(searchTimeout);
+
+            searchTimeout = setTimeout(() => {
+                loadSessions(currentType, this.value.trim());
+            }, 300);
+        });
+    }
+
+    // ---------------- BACK/FORWARD ----------------
+    window.addEventListener("popstate", function(){
+        const params = new URLSearchParams(window.location.search);
+        const type = params.get("type") || "upcoming";
+        const search = params.get("search") || "";
+
+        loadSessions(type, search);
+    });
+
+});
+
+document.addEventListener("click", function(e) {
+
+    if (e.target.closest(".assign-team-btn")) {
+        return;
+    }
+
+    const card = e.target.closest(".session-card");
+
+    if (card) {
+        const url = card.getAttribute("data-url");
+
+        if (url) {
+            window.location.href = url.trim();
+        }
+    }
+
 });

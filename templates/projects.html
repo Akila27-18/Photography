@@ -87,14 +87,13 @@
 
           {% for project in projects %}
           <div class="project-card {{ slug }}"
-               data-project-id="{{ project.id }}"
-               {% if project.selection %}
-                 data-token="{{ project.selection.token }}"
-               {% endif %}
-               {% if slug == "pre-production" or slug == "post-production" %}
-                 data-session-url="{% url 'projects:project_sessions' project.id %}"
-               {% endif %}
-               style="cursor:pointer;">
+     data-project-id="{{ project.id }}"
+     data-session-url="{% url 'projects:project_sessions' project.id %}"
+     {% if project.selection %}
+       data-token="{{ project.selection.token }}"
+     {% endif %}
+     style="cursor:pointer;">
+
 
             <!-- CODE -->
             <small class="project-code">{{ project.code }}</small>

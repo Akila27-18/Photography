@@ -46,6 +46,17 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.client_name} – {self.event_type}"
+    @property
+    def total_invoiced(self):
+        return sum(inv.total for inv in self.invoices.all())
+
+    @property
+    def total_paid(self):
+        return sum(inv.paid_amount for inv in self.invoices.all())
+
+    @property
+    def remaining_amount(self):
+        return self.lead.amount - self.total_paid
 
     # ---------- UI HELPERS ----------
     def status_color(self):
@@ -202,3 +213,4 @@ class ProjectPhoto(models.Model):
     image = models.ImageField(upload_to="project_photos/")
     is_selected = models.BooleanField(default=False)
     selection = models.ForeignKey(PhotoSelection, on_delete=models.CASCADE, related_name="photos", null=True, blank=True)
+

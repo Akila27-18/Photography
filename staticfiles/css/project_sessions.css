@@ -112,3 +112,28 @@
 .actions .btn-danger:hover {
   background-color: #dc2626;
 }
+
+.input-error {
+  border: 1px solid #dc2626 !important;
+  background-color: #fff5f5;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.completion-bar {
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.completion-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  transition: width 0.3s ease;
+}

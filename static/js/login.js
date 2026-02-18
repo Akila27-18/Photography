@@ -12,6 +12,28 @@ function togglePassword() {
     pwd.type = pwd.type === "password" ? "text" : "password";
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+
+    const passwordInput = document.getElementById("selectionPassword");
+    const toggleEye = document.getElementById("toggleEye");
+
+    if (!passwordInput || !toggleEye) return;
+
+    toggleEye.addEventListener("click", function () {
+
+        const isPassword = passwordInput.type === "password";
+
+        // Toggle input type
+        passwordInput.type = isPassword ? "text" : "password";
+
+        // Toggle icon image
+        toggleEye.src = isPassword
+            ? toggleEye.dataset.open
+            : toggleEye.dataset.close;
+    });
+
+});
+
 // -------------------------
 // Fetch login page config
 // -------------------------

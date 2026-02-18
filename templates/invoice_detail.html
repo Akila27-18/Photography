@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.invoice-wrapper {
+    font-family: 'Outfit', sans-serif;
+    background: #F7F7F7;
+    padding: 40px;
+}
+
+.invoice-card {
+    background: #ffffff;
+    max-width: 850px;
+    margin: auto;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.invoice-number {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.client-section {
+    margin-bottom: 30px;
+}
+
+.client-section h4 {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.client-name {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.invoice-table th {
+    text-align: left;
+    font-size: 12px;
+    color: #888;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.invoice-table td {
+    padding: 12px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.summary {
+    width: 300px;
+    margin-left: auto;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+.summary-total {
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    background: #FEF9C3;
+}
+
+.action-buttons {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.btn-download {
+    background: #A12A2A;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+</style>
+
+
+<div class="invoice-wrapper">
+    <div class="invoice-card">
+
+        <div class="invoice-header">
+            <div>
+                <div class="invoice-number">
+                    Invoice {{ invoice.invoice_number }}
+                </div>
+                <div>
+                    {{ invoice.created_at|date:"d M Y" }}
+                </div>
+            </div>
+
+            <div class="status-badge">
+                {{ invoice.status|title }}
+            </div>
+        </div>
+
+
+        <div class="client-section">
+            <h4>Bill To</h4>
+            <div class="client-name">
+                {{ invoice.project.client_name }}
+            </div>
+            <div>{{ invoice.project.lead.email }}</div>
+            <div>{{ invoice.project.lead.phone }}</div>
+        </div>
+
+
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>SERVICE</th>
+                    <th>QTY</th>
+                    <th>PRICE</th>
+                    <th>AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ invoice.project.event_type }}</td>
+                    <td>1</td>
+                    <td>₹ {{ invoice.subtotal }}</td>
+                    <td>₹ {{ invoice.subtotal }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div class="summary">
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>₹ {{ invoice.subtotal }}</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Advance Paid</span>
+                <span>₹ {{ invoice.paid_amount }}</span>
+            </div>
+
+            <div class="summary-row summary-total">
+                <span>Total</span>
+                <span>₹ {{ invoice.total }}</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Remaining</span>
+                <span>₹ {{ invoice.remaining_amount }}</span>
+            </div>
+        </div>
+
+
+        <div class="action-buttons">
+            <a href="#" class="btn-download">
+                Download PDF
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

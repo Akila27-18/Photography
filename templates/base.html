@@ -43,10 +43,12 @@
 </a>
 
 
-    <a href="#" class="nav-item {% if active_page == 'invoices' %}active{% endif %}">
-      <img src="{% static 'images/' %}{% if active_page == 'invoices' %}invoice.svg{% else %}invoice.svg{% endif %}">
-      <span>Invoice</span>
-    </a>
+ <a href="{% url 'projects:invoice_list' %}" 
+   class="nav-item {% if active_page == 'invoices' %}active{% endif %}">
+    <img src="{% static 'images/invoice.svg' %}">
+    <span>Invoice</span>
+</a>
+
 
     <a href="#" class="nav-item {% if active_page == 'employees' %}active{% endif %}">
       <img src="{% static 'images/' %}{% if active_page == 'employees' %}employees.svg{% else %}employees.svg{% endif %}">

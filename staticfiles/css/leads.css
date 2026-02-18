@@ -11,6 +11,36 @@
   padding: 24px;
   font-family: 'Inter', sans-serif;
 }
+.overview-header {
+  display: flex;
+  justify-content: space-between; /* title left, actions right */
+  align-items: center;            /* vertical alignment */
+  margin-bottom: 10px;
+  gap: 16px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;  /* space between search and buttons */
+}
+
+.search-box .search-input {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 200px; /* adjust as needed */
+}
+
+.btn-filter,
+.btn-primary {
+  /* margin: 50px 0 0 0; */
+  white-space: nowrap; /* prevents buttons from wrapping */
+}
+
+ 
+/* Filter button already styled with .btn-filter */
+
 
 /* ================= OVERVIEW ================= */
 .page-title {
@@ -20,6 +50,7 @@
 }
 
 .stats-row {
+  margin: 0 20px 0 50px;
   display: flex;
   align-items: flex-end;
   gap: 56px;
@@ -42,6 +73,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  position: relative;
 }
 
 .btn-primary {
@@ -69,15 +101,17 @@
 
 .filter-dropdown {
   position: absolute;
-  top: 44px;
+  top: 100px;
   right: 0;
   background: #FFFFFF;
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   padding: 12px;
   display: none;
-  z-index: 10;
+  z-index: 50; /* ensures it appears above other content */
+  transition: all 0.2s ease;
 }
+
 
 .filter-dropdown label {
   display: flex;
@@ -85,6 +119,13 @@
   gap: 8px;
   font-size: 13px;
   padding: 6px 0;
+}
+.filter-dropdown {
+  transition: all 0.2s ease;
+}
+
+.filter-dropdown.show {
+  display: block;
 }
 
 /* ================= BOARD ================= */
@@ -258,7 +299,7 @@
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 6px 12px;
+  padding: 6px;
   cursor: pointer;
 }
 /* ================= CARD FLIP ================= */
