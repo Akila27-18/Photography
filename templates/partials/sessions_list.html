@@ -6,23 +6,16 @@
         {% for project in projects %}
 
         <div class="session-card 
-    {% if project.status == 'pre_production' or project.status == 'post_production' %}
-        in-progress
-    {% else %}
-        pending
-    {% endif %}"
-    data-url="{% if project.status == 'pre_production' or project.status == 'post_production' %}
-        {% url 'projects:project_sessions' project.id %}
-    {% else %}
-        {% url 'projects:board' %}
-    {% endif %}"
->
-
+            {% if project.status == 'pre_production' or project.status == 'post_production' %}in-progress{% else %}pending{% endif %}"
+            data-url="{% if project.status == 'pre_production' or project.status == 'post_production' %}{% url 'projects:project_sessions' project.id %}{% else %}{% url 'projects:board' %}{% endif %}"
+            role="button"
+            tabindex="0"
+        >
 
             <!-- DATE -->
             <div class="date-section">
-                <div class="day">{{ project.start_date|date:"D" }}</div>
-                <div class="date">{{ project.start_date|date:"d" }}</div>
+                <div class="day">{{ project.start_date|date:"D"|default:"TBD" }}</div>
+                <div class="date">{{ project.start_date|date:"d"|default:"--" }}</div>
             </div>
 
             <div class="divider"></div>
@@ -30,10 +23,10 @@
             <!-- TIME + VENUE -->
             <div class="time-block">
                 <div class="time-row">
-                    ⏰ {{ project.time|time:"h:i A" }}
+                    ⏰ {{ project.time|time:"h:i A"|default:"TBD" }}
                 </div>
                 <div class="venue-row">
-                    📍 {{ project.venue }}
+                    📍 {{ project.venue|default:"TBD" }}
                 </div>
             </div>
 
@@ -47,7 +40,7 @@
                     {% if project.team.exists %}
                         <div class="avatars">
                             {% for member in project.team.all|slice:":5" %}
-                                <div class="avatar">
+                                <div class="avatar" title="{{ member.get_full_name|default:member.username }}">
                                     {{ member.username|slice:":2"|upper }}
                                 </div>
                             {% endfor %}
@@ -77,5 +70,5 @@
     {% endfor %}
 
 {% else %}
-    <p class="empty-text">No sessions available.</p>
+    <p class="empty-text" style="text-align: center;">No sessions available.</p>
 {% endif %}

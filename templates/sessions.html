@@ -18,23 +18,29 @@
     <div class="sessions-topbar">
 
         <!-- FILTER TABS -->
-        <div class="session-tabs">
+        <div class="session-tabs" role="tablist">
 
             <button type="button"
                     data-type="upcoming"
-                    class="tab {% if active_tab == 'upcoming' %}active{% endif %}">
+                    class="tab {% if active_tab == 'upcoming' %}active{% endif %}"
+                    role="tab"
+                    aria-selected="{% if active_tab == 'upcoming' %}true{% else %}false{% endif %}">
                 Upcoming Event
             </button>
 
             <button type="button"
                     data-type="past"
-                    class="tab {% if active_tab == 'past' %}active{% endif %}">
+                    class="tab {% if active_tab == 'past' %}active{% endif %}"
+                    role="tab"
+                    aria-selected="{% if active_tab == 'past' %}true{% else %}false{% endif %}">
                 Past Event
             </button>
 
             <button type="button"
                     data-type="decided"
-                    class="tab {% if active_tab == 'decided' %}active{% endif %}">
+                    class="tab {% if active_tab == 'decided' %}active{% endif %}"
+                    role="tab"
+                    aria-selected="{% if active_tab == 'decided' %}true{% else %}false{% endif %}">
                 To Be Decided
             </button>
 
@@ -44,7 +50,7 @@
         <input type="text"
                id="searchInput"
                autocomplete="off"
-               placeholder="Search client..."
+               placeholder="🔎Search client..."
                value="{{ request.GET.search|default:'' }}">
 
     </div>

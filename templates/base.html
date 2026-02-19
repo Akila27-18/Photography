@@ -6,72 +6,170 @@
   <title>{% block title %}Akash{% endblock %}</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
-  {% block extra_css %}{% endblock %}
+
+  {% block extra_css %}
+  <!-- ================= NOTIFICATION MODAL CSS ================= -->
+  <style>
+    .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* ensures modal is always on top */
+  border: 1px solid var(--red); /* red border for modal */
+}
+
+.modal-content {
+  background-color: #fff;
+  color: var(--black); /* use black for readable text */
+  padding: 20px 30px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.modal-content ul {
+  color: var(--red); /* title in red */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-content li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-content li:last-child {
+  border-bottom: none;
+}
+
+  </style>
+  {{ block.super }}
+  {% endblock %}
 </head>
 
 <body>
 <div style="width:100%; height: 5vh; background-color:var(--red);"></div>
+
 <header class="navbar">
   <div class="nav-left">
     <img src="{% static 'images/logo.png' %}" class="logo-img" style="width: 70px; height: 50px;">
   </div>
 
   <nav class="nav-center">
-
     <a href="#" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
-      <img src="{% static 'images/' %}{% if active_page == 'dashboard' %}dashboard.svg{% else %}dashboard.svg{% endif %}">
+      <img src="{% static 'images/dashboard.svg' %}">
       <span>Dashboard</span>
     </a>
 
     <a href="{% url 'leads:leads' %}" class="nav-item {% if active_page == 'leads' %}active{% endif %}">
-      <img src="{% static 'images/' %}{% if active_page == 'leads' %}leads.svg{% else %}leads.svg{% endif %}">
+      <img src="{% static 'images/leads.svg' %}">
       <span>Leads</span>
     </a>
 
     <a href="{% url 'projects:board' %}" class="nav-item {% if active_page == 'projects' %}active{% endif %}">
-      <img src="{% static 'images/' %}{% if active_page == 'projects' %}project-filled.png{% else %}project.svg{% endif %}">
+      <img src="{% static 'images/project.svg' %}">
       <span>Projects</span>
     </a>
-    
-    <a href="{% url 'projects:sessions' %}"
-   class="nav-item {% if active_page == 'sessions' %}active{% endif %}">
-    
-    <img src="{% static 'images/' %}{% if active_page == 'sessions' %}session-filled.png{% else %}session.svg{% endif %}" 
-         alt="Sessions">
-    
-    <span>Session</span>
-</a>
 
-
- <a href="{% url 'projects:invoice_list' %}" 
-   class="nav-item {% if active_page == 'invoices' %}active{% endif %}">
-    <img src="{% static 'images/invoice.svg' %}">
-    <span>Invoice</span>
-</a>
-
-
-    <a href="#" class="nav-item {% if active_page == 'employees' %}active{% endif %}">
-      <img src="{% static 'images/' %}{% if active_page == 'employees' %}employees.svg{% else %}employees.svg{% endif %}">
-      <span>Employees</span>
+    <a href="{% url 'projects:sessions' %}" class="nav-item {% if active_page == 'sessions' %}active{% endif %}">
+      <img src="{% static 'images/session.svg' %}" alt="Sessions">
+      <span>Session</span>
     </a>
 
-    
+    <a href="{% url 'projects:invoice_list' %}" class="nav-item {% if active_page == 'invoices' %}active{% endif %}">
+      <img src="{% static 'images/invoice.svg' %}">
+      <span>Invoice</span>
+    </a>
+
+    <a href="#" class="nav-item {% if active_page == 'employees' %}active{% endif %}">
+      <img src="{% static 'images/employees.svg' %}">
+      <span>Employees</span>
+    </a>
   </nav>
 
   <div class="nav-right">
-    <button class="icon-btn">
+    <button class="icon-btn" id="notification-btn">
       <img src="{% static 'images/notification.svg' %}" style="width: 30px; height: 30px;">
+      <span class="notif-count" id="notif-count">{{ notifications|length }}</span>
     </button>
+
     <div class="profile-circle">AK</div>
   </div>
-  
 </header>
+
+<!-- ================= NOTIFICATION MODAL ================= -->
+<div id="notification-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Notifications</h2>
+    <ul>
+      {% for notif in notifications %}
+      <li>
+        <strong>{{ notif.title }}</strong><br>
+        <small>{{ notif.details }}</small>
+      </li>
+      {% empty %}
+      <li>No notifications</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
 
 {% block content %}{% endblock %}
 <form style="display:none;">{% csrf_token %}</form>
 
-{% block extra_js %}{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('notification-modal');
+    const btn = document.getElementById('notification-btn');
+    const closeBtn = modal.querySelector('.close-btn');
+
+    // Open modal
+    btn.addEventListener('click', function() {
+        modal.style.display = 'flex';
+    });
+
+    // Close modal on 'x'
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside content
+    window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+</script>
+{{ block.super }}
+{% endblock %}
 
 </body>
 </html>
-
